@@ -312,4 +312,4 @@ The following Registry keys in HKCU\SOFTWARE\INTELLISOFT\<id>\PGNPROFILER could 
 
 Note: more information can be found in the Intellisoft's Developers Manual and the Forum.
 
-Note: I descriped the approach to the messages filtration here: https://www.codeproject.com/Articles/51386/Yet-Another-Concurrent-Expression-Evaluator.
+Note: I described the approach to the messages filtration here: https://www.codeproject.com/Articles/51386/Yet-Another-Concurrent-Expression-Evaluator.
