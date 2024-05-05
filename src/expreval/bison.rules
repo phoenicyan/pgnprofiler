@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="Bison File"
+	Version="8.00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="bison"
+			CommandLine="bison.exe -o $(InputName).c $(InputFileName)"
+			Outputs="$(ProjectDir)\$(InputName).c"
+			FileExtensions="*.y"
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>

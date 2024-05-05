@@ -1,0 +1,51 @@
+ This class provides functions for computing 16-bit CRC values.
+ It implements both a slow bit-at-a-time method and a table-driven
+ method.  The simple method was implemented as a way of verifying
+ that the optimized table-method works.  
+
+
+ POPULAR POLYNOMIALS
+
+    CCITT:	x^16 + x^12 + x^5 + x^0 (set m_Polynomial to 0x1021)
+
+	CRC-16:	x^16 + x^15 + x^2 + x^0 (set m_Polynomial to 0x8005)
+
+
+ REFLECTED INPUT/CRC
+
+	Reflected input and reflected CRC is common with serial interfaces.
+  This is because the least-significant-bit is typically transmitted 
+  first with serial interfaces.
+
+
+USAGE:
+-----------------------------------------------------------------------
+		#include "Crc16.h"
+
+		char TestData[] = "Test Data abcdefghijklmnopqrstuvwxyz";
+
+		void main( int argc, char *argv[] )
+		{
+			CCrc16	crc;
+
+			USHORT	crc_1, crc_2;
+
+			crc.m_Polynomial = 0x8005;	// Most commonly 0x8005 or 0x1021
+			crc.m_Reflect = FALSE;		// use TRUE to reverse bits of input bytes
+			crc.m_ReflectCrc = FALSE;	// use TRUE to reverse bits of output crc
+
+
+			crc.m_CrcXorOutput = 0;		// use 0xFFFF to invert crc output
+			crc.m_ResetValue = 0;		// Most commonly 0 or 0xFFFF
+
+			crc_1 = crc.SimpleComputeBlock( TestData, strlen( TestData ) );
+
+			crc.CreateTable()
+
+			crc_2 = crc.ComputeCrcUsingTable( TestData, strlen( TestData ) );
+
+			printf( "CRC by simple method: %04X\n", crc_1 );
+			printf( "CRC using table:      %04X\n", crc_2 );
+		}
+-----------------------------------------------------------------------
+

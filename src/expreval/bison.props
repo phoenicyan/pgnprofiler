@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup
+    Condition="'$(bisonBeforeTargets)' == '' and '$(bisonAfterTargets)' == '' and '$(ConfigurationType)' != 'Makefile'">
+    <bisonBeforeTargets>Midl</bisonBeforeTargets>
+    <bisonAfterTargets>CustomBuild</bisonAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup>
+    <bisonDependsOn
+      Condition="'$(ConfigurationType)' != 'Makefile'">_SelectedFiles;$(bisonDependsOn)</bisonDependsOn>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <bison>
+      <CommandLineTemplate>bison.exe -o %(Filename).c %(Filename)%(Extension)</CommandLineTemplate>
+      <Outputs>$(ProjectDir)\%(Filename).c</Outputs>
+    </bison>
+  </ItemDefinitionGroup>
+</Project>

@@ -1,0 +1,628 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{142c5a22-c2e7-42b4-89d1-cc773ce1b86c}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{73ee8460-b6ce-437a-ae5c-1b2eeac0deab}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{36341d87-255e-4124-a915-ec65367d2b30}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;jpg;jpeg;jpe;manifest</Extensions>
+    </Filter>
+    <Filter Include="expreval">
+      <UniqueIdentifier>{1b4ac187-02d0-4a8c-9180-ac8595241ad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{802232ff-1d64-49ad-9dc4-5b2666d95c99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boost">
+      <UniqueIdentifier>{597353a2-2f62-4858-b46f-dce72459dac6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="COMMON\CsvReader">
+      <UniqueIdentifier>{b438da41-66ea-4bcf-9644-7b791bb92e52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="COMMON\Tokenizer">
+      <UniqueIdentifier>{61a63d2f-c581-4e1f-be87-8d0aaff85b9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Remote">
+      <UniqueIdentifier>{51fca14b-644f-47d1-b7cf-388ca06d5e7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty">
+      <UniqueIdentifier>{992a037d-95a0-45fa-91f9-d5d48462bd99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\WTLPropGrid">
+      <UniqueIdentifier>{0d169059-c2f4-4f31-b469-642d9b1408f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\RegUtil">
+      <UniqueIdentifier>{32952b61-025e-4fdd-9204-fbcc8fb5a271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\ThreadSync">
+      <UniqueIdentifier>{767c2684-3325-4b51-9e94-a57ce120f361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\OwnerDrawMenu">
+      <UniqueIdentifier>{dfc96386-0197-4ecf-a855-f93cf3566d27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\CRC">
+      <UniqueIdentifier>{758eabea-b579-4b03-a051-519b9a2be69d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\MyDialogs">
+      <UniqueIdentifier>{d5c8613b-544e-4277-80c8-75ae816f4cac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Optimizer">
+      <UniqueIdentifier>{a3dbe2b8-58bf-4f20-8eb3-9c416b86c509}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Palit">
+      <UniqueIdentifier>{77a9e8b1-89d7-43ac-90e3-3219d6b0f606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Profiler">
+      <UniqueIdentifier>{49c57e27-c35f-4a2c-95ae-027e51202087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{be89ddbb-fbb7-471e-9783-3d4b8d054d56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdparty\jsoncpp">
+      <UniqueIdentifier>{24859739-3559-45d5-8e6d-e343f17888e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DetailsView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="driver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExplorerView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoggerItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PGNProfiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PGNProfilerView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProfilerServer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TraceReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\Profiler\OneInstance.cpp">
+      <Filter>Common\Profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\Profiler\ProfilerDef.cpp">
+      <Filter>Common\Profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\RegUtil\RegUtil.cpp">
+      <Filter>3rdparty\RegUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\CRC\Crc32.cpp">
+      <Filter>Common\CRC</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\CsvReader\CsvReader.cpp">
+      <Filter>COMMON\CsvReader</Filter>
+    </ClCompile>
+    <ClCompile Include="OptimizerDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\Tokenizer\tokenizer.cpp">
+      <Filter>COMMON\Tokenizer</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\Optimizer\Optimizer.cpp">
+      <Filter>Common\Optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="ConnectHostDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Remote\RemoteApi.cpp">
+      <Filter>Remote</Filter>
+    </ClCompile>
+    <ClCompile Include="Remote\ServiceMain.cpp">
+      <Filter>Remote</Filter>
+    </ClCompile>
+    <ClCompile Include="Remote\PipeItem.cpp">
+      <Filter>Remote</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\Profiler\RemMsg.cpp">
+      <Filter>Common\Profiler</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\MyDialogs\MyDialogs.cpp">
+      <Filter>Common\MyDialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="PGNPOptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\c_regex_traits.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\cpp_regex_traits.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\cregex.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\icu.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\fileiter.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\regex.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\regex_debug.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\regex_raw_buffer.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\static_mutex.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\regex_traits_defaults.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\w32_regex_traits.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\wc_regex_traits.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\wide_posix_api.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\usinstances.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\instances.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\posix_api.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Program Files (x86)\boost_1_70_0\libs\regex\src\winstances.cpp">
+      <Filter>Boost</Filter>
+    </ClCompile>
+    <ClCompile Include="MyTaskExecutor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PipesMonitor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\Palit\ColorPalette.cpp">
+      <Filter>Common\Palit</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\Palit\skinscrollbar.cpp">
+      <Filter>Common\Palit</Filter>
+    </ClCompile>
+    <ClCompile Include="COMMON\Palit\skinscrollwnd.cpp">
+      <Filter>Common\Palit</Filter>
+    </ClCompile>
+    <ClCompile Include="PackedMessage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\RegUtil\RegSettings.cpp">
+      <Filter>3rdparty\RegUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\XBrowseForFolder.cpp">
+      <Filter>3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\XMessageBox.cpp">
+      <Filter>3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\HookMgr.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\MyPaneContainer.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\PGNPropsCtrl.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\SkinMenu.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\SkinMenuMgr.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\SkinWindow.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\jsoncpp\src\lib_json\json_reader.cpp">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\jsoncpp\src\lib_json\json_value.cpp">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\jsoncpp\src\lib_json\json_writer.cpp">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\THREADSYNC\CriticalSection.cpp">
+      <Filter>3rdparty\ThreadSync</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AboutDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DetailsView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExplorerView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FilterView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LikeRegexDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoggerItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PGNProfilerView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProfilerServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TraceReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\Profiler\OneInstance.h">
+      <Filter>Common\Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\Profiler\ProfilerDef.h">
+      <Filter>Common\Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\RegUtil\RegUtil.h">
+      <Filter>3rdparty\RegUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="driver.h">
+      <Filter>expreval</Filter>
+    </ClInclude>
+    <ClInclude Include="expression.h">
+      <Filter>expreval</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\CRC\Crc32.h">
+      <Filter>Common\CRC</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\CsvReader\CsvReader.h">
+      <Filter>COMMON\CsvReader</Filter>
+    </ClInclude>
+    <ClInclude Include="OptimizerDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PGNPOptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\Tokenizer\tokenizer.h">
+      <Filter>COMMON\Tokenizer</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\Optimizer\Optimizer.h">
+      <Filter>Common\Optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\OwnerDrawMenu\CCMenu.h">
+      <Filter>3rdparty\OwnerDrawMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="DropFileHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectHostDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Remote\RemoteApi.h">
+      <Filter>Remote</Filter>
+    </ClInclude>
+    <ClInclude Include="Remote\PipeItem.h">
+      <Filter>Remote</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\Profiler\RemMsg.h">
+      <Filter>Common\Profiler</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\MyDialogs\MyDialogs.h">
+      <Filter>Common\MyDialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="MyTaskExecutor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PipesMonitor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\Palit\ColorPalette.h">
+      <Filter>Common\Palit</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\Palit\skinscrollbar.h">
+      <Filter>Common\Palit</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\Palit\skinscrollwnd.h">
+      <Filter>Common\Palit</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\CppProperty.h">
+      <Filter>3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="PackedMessage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\RegUtil\RegSettings.h">
+      <Filter>3rdparty\RegUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="COMMON\CommonCfg.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\XMessageBox.h">
+      <Filter>3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="common\versioninfo.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\WTLPropGrid\WTLPropGrid.h">
+      <Filter>3rdparty\WTLPropGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\HookMgr.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\MyHeader.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\MyCommandBar.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\MyPaneContainer.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\MyReBarCtrl.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\MyToolBar.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\SkinMenu.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\SkinMenuMgr.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\SkinWindow.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\PGNPropsCtrl.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\include\json\json.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\src\lib_json\json_batchallocator.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\src\lib_json\json_tool.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\include\json\config.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\include\json\assertions.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\include\json\autolink.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\THREADSYNC\CriticalSection.h">
+      <Filter>3rdparty\ThreadSync</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\include\json\forwards.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\include\json\features.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\include\json\value.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\include\json\writer.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\jsoncpp\include\json\reader.h">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\MySplitterWindowT.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Error.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Information.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\loggers.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mainframe.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\PGNProfiler.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\RSNProfiler.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\README.md" />
+    <None Include="..\LICENSE" />
+    <None Include="3rdparty\jsoncpp\src\lib_json\json_valueiterator.inl">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </None>
+    <None Include="3rdparty\jsoncpp\src\lib_json\json_internalarray.inl">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </None>
+    <None Include="3rdparty\jsoncpp\src\lib_json\json_internalmap.inl">
+      <Filter>3rdparty\jsoncpp</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="PGNProfiler.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <bison Include="expreval.y">
+      <Filter>expreval</Filter>
+    </bison>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\DNDProfiler.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\CASProfiler.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\file_open.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\file_save.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\edit_copy.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\edit_clear.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_zoomin.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_zoomout.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\about.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\refresh.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_capture.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_filter.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\host.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\scrollbar_dark.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\scrollbar_light.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\mainframe_dark.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\loggers_dark.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\min.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\max.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\restore.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\close.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\close.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\maximize.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\minimize.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\restore.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_filteroff.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\file_open_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\file_save_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_capture_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_pause_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_filter_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_filteroff_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_pause.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\about_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\edit_copy_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_autoscroll.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_autoscrolloff.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_timeformat.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_timeformatoff.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_timeformat_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\view_timeformatoff_dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
