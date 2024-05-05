@@ -305,8 +305,8 @@ Following constants can be used in expressions when comparing a variable to a co
 
 The following Registry keys in HKCU\SOFTWARE\INTELLISOFT\<id>\PGNPROFILER could be used to enable and configure various advanced features of the PGNProfiler. Where <id> is PGNP for Postgres and Greenplum products, and RSNP – for Redshift.
 
-| Key  | Type  |
-|------|-------|
+| Key  | Type  | Description |
+|------|-------|-------------|
 | ConnectToHostEnabled | DWORD | When key exists and set to 1, UI for connecting to remote hosts enabled. |
 | MaxLogFileSize | String | Contains abbreviated string with maximum size of the .pgl file (current trace). When the maximum size is reached the current file is closed, and new file is created with the latest timestamp added to the name. Examples: "1K" -> 1000, "360M" -> 360'000'000, "2.6G" -> 2'000'000'000, "3T" -> 3'000'000'000'000, "0" -> 0 (infinite size). When missing key or empty value, then maximum size is 2^30. The size cannot be set smaller than 16777216. |
 
