@@ -1,6 +1,8 @@
 # pgnprofiler
 Open source version of Intellisoft's PGNProfiler
 
+![alt text](miscdata/img00.jpg)
+
 ## Purpose
 
 Need an efficient tool to collect trace/profiling info from Intellisoft OLE DB Provider for PostgreSQL. The tool should be able to read very long traces from Windows applications and Services (32- and 64-bit), change logging levels, filter for errors, store traces to files, and display previously stored files. It has advanced features like injecting itself into another computer where PGNP was not installed and collecting a remote trace. It supports light and dark themes. Etc.
@@ -310,6 +312,15 @@ The following Registry keys in HKCU\SOFTWARE\INTELLISOFT\<id>\PGNPROFILER could 
 | ConnectToHostEnabled | DWORD | When key exists and set to 1, UI for connecting to remote hosts enabled. |
 | MaxLogFileSize | String | Contains abbreviated string with maximum size of the .pgl file (current trace). When the maximum size is reached the current file is closed, and new file is created with the latest timestamp added to the name. Examples: "1K" -> 1000, "360M" -> 360'000'000, "2.6G" -> 2'000'000'000, "3T" -> 3'000'000'000'000, "0" -> 0 (infinite size). When missing key or empty value, then maximum size is 2^30. The size cannot be set smaller than 16777216. |
 
-Note: more information can be found in the Intellisoft's Developers Manual and the Forum.
+## Demo/Tests
+
+I have not included the following:
+* security-related code (ScrableText);
+* UI controls implementation (WTLPropGrid);
+* automated tests;
+
+I included sample.pgl file (in miscdata directory). It can be used only for viewing/demo-ing the PGNProfiler. Distribution, transfer and altering of the file is prohibited.
+
+Note: more information can be found in the Intellisoft's [Developers Manual](https://www.pgoledb.com/index.php/download?task=download&cid[0]=26) and the [Forum](https://www.pgoledb.com/index.php/myforum).
 
 Note: I described the approach to the messages filtration here: https://www.codeproject.com/Articles/51386/Yet-Another-Concurrent-Expression-Evaluator.
