@@ -173,45 +173,9 @@ Following constants can be used in expressions when comparing a variable to a co
 
 | Variable | Constant |
 |----------| ---------|
-| SQLType | USER |
-| | SYSTEM |
-| | NOTIFY |
-| | ERROR |
-| | COLUMNS_SCHEMA |
-| | INDEXES_SCHEMA |
-| | TABLES_SCHEMA |
-| | CATALOGS_SCHEMA |
-| | FOREIGN_KEYS_SCHEMA |
-| | PRIMARY_KEYS_SCHEMA |
-| | PROCEDURE_COLUMNS_SCHEMA |
-| | PROCEDURE_PARAMETERS_SCHEMA |
-| | PROCEDURES_SCHEMA |
-| CMDType | SELECT |
-| | INSERT |
-| | UPDATE |
-| | DELETE |
-| | CREATE DATABASE |
-| | CREATE TABLE |
-| | CREATE VIEW |
-| | CREATE INDEX |
-| | CREATE FUNCTION |
-| | ALTER |
-| | SET |
-| | SHOW |
-| | DROP DATABASE |
-| | DROP TABLE |
-| | DROP VIEW |
-| | DROP INDEX |
-| | DROP FUNCTION |
-| | PROCEDURE |
-| | INTERNALPROC |
-| | START TRANSACTION |
-| | COMMIT |
-| | ROLLBACK |
-| | NOTIFY  |
-| | COPY |
-| CursorMode | Forward only |
-| | Can scroll backwards |
+| SQLType | <pre>USER<br>SYSTEM<br>NOTIFY<br>ERROR<br>COLUMNS_SCHEMA<br>INDEXES_SCHEMA<br>TABLES_SCHEMA<br>CATALOGS_SCHEMA<br>FOREIGN_KEYS_SCHEMA<br>PRIMARY_KEYS_SCHEMA<br>PROCEDURE_COLUMNS_SCHEMA<br>PROCEDURE_PARAMETERS_SCHEMA<br>PROCEDURES_SCHEMA</pre> |
+| CMDType | <pre>SELECT<br>INSERT<br>UPDATE<br>DELETE<br>CREATE DATABASE<br>CREATE TABLE<br>CREATE VIEW<br>CREATE INDEX<br>CREATE FUNCTION<br>ALTER<br>SET<br>SHOW<br>DROP DATABASE<br>DROP TABLE<br>DROP VIEW<br>DROP INDEX<br>DROP FUNCTION<br>PROCEDURE<br>INTERNALPROC<br>START TRANSACTION<br>COMMIT<br>ROLLBACK<br>NOTIFY<br>COPY</pre> |
+| CursorMode | <pre>Forward only<br>Can scroll backwards</pre> |
 
 ## Format of PGL file
 
@@ -228,51 +192,9 @@ Following constants can be used in expressions when comparing a variable to a co
 | Size | Value | Description |
 |------|-------|-------------|
 |4 | *number* | Logger ID |
-|1 | 0 (TRC_NONE) | Trace type |
-||1 (TRC_CLIENTSQL) |
-||2 (TRC_SYSTEMSQL) |
-||3 (TRC_NOTIFIES) |
-||4 (TRC_ERROR) |
-||5 (TRC_SCHEMA_COLUMNS) |
-||6 (TRC_SCHEMA_INDEXES) |
-||7 (TRC_SCHEMA_TABLES) |
-||8 (TRC_SCHEMA_CATALOGS) |
-||9 (TRC_SCHEMA_FOREIGN_KEYS) |
-||10 (TRC_SCHEMA_PRIMARY_KEYS) |
-||11 (TRC_SCHEMA_PROCEDURE_COLUMNS) |
-||12 (TRC_SCHEMA_PROCEDURE_PARAMETERS) |
-||13 (TRC_SCHEMA_PROCEDURES) |
-||14 (TRC_SYS_SCHEMA) |
-||15 (TRC_USER_SCHEMA) |
-||16 (TRC_COMMENT) |
-|1 | 0 (QT_NONE) | Command type |
-||1 (QT_SELECT) |
-||2 (QT_INSERT) |
-||3 (QT_UPDATE) |
-||4 (QT_DELETE) |
-||5 (QT_CREATE_DATABASE) |
-||6 (QT_CREATE_TABLE) |
-||7 (QT_CREATE_VIEW) |
-||8 (QT_CREATE_INDEX) |
-||9 (QT_CREATE_FUNCTION) |
-||10 (QT_ALTER) |
-||11 (QT_SET) |
-||12 (QT_SHOW) |
-||13 (QT_DROP_DATABASE) |
-||14 (QT_DROP_TABLE) |
-||15 (QT_DROP_VIEW) |
-||16 (QT_DROP_INDEX) |
-||17 (QT_DROP_FUNCTION) |
-||18 (QT_PROCEDURE) |
-||19 (QT_INTERNAL_PROC) |
-||20 (QT_START_TRANS) |
-||21 (QT_COMMIT) |
-||22 (QT_ROLLBACK) |
-||23 (QT_NOTIFY) |
-||24 (QT_COPY) |
-|1 | 0 (FORWARD_ONLY) | Cursor type |
-||1 (CANSCROLLBACKWARDS) |
-||2 (VIRTUAL) |
+|1 | <pre>0 (TRC_NONE)<br>1 (TRC_CLIENTSQL)<br>2 (TRC_SYSTEMSQL)<br>3 (TRC_NOTIFIES)<br>4 (TRC_ERROR)<br>5 (TRC_SCHEMA_COLUMNS)<br>6 (TRC_SCHEMA_INDEXES)<br>7 (TRC_SCHEMA_TABLES)<br>8 (TRC_SCHEMA_CATALOGS)<br>9 (TRC_SCHEMA_FOREIGN_KEYS)<br>10 (TRC_SCHEMA_PRIMARY_KEYS)<br>11 (TRC_SCHEMA_PROCEDURE_COLUMNS)<br>12 (TRC_SCHEMA_PROCEDURE_PARAMETERS)<br>13 (TRC_SCHEMA_PROCEDURES)<br>14 (TRC_SYS_SCHEMA)<br>15 (TRC_USER_SCHEMA)<br>16 (TRC_COMMENT)</pre> | Trace type |
+|1 | <pre>0 (QT_NONE)<br>1 (QT_SELECT)<br>2 (QT_INSERT)<br>3 (QT_UPDATE)<br>4 (QT_DELETE)<br>5 (QT_CREATE_DATABASE)<br>6 (QT_CREATE_TABLE)<br>7 (QT_CREATE_VIEW)<br>8 (QT_CREATE_INDEX)<br>9 (QT_CREATE_FUNCTION)<br>10 (QT_ALTER)<br>11 (QT_SET)<br>12 (QT_SHOW)<br>13 (QT_DROP_DATABASE)<br>14 (QT_DROP_TABLE)<br>15 (QT_DROP_VIEW)<br>16 (QT_DROP_INDEX)<br>17 (QT_DROP_FUNCTION)<br>18 (QT_PROCEDURE)<br>19 (QT_INTERNAL_PROC)<br>20 (QT_START_TRANS)<br>21 (QT_COMMIT)<br>22 (QT_ROLLBACK)<br>23 (QT_NOTIFY)<br>24 (QT_COPY)</pre> | Command type |
+|1 | <pre>0 (FORWARD_ONLY)<br>1 (CANSCROLLBACKWARDS)<br>2 (VIRTUAL)</pre> | Cursor type |
 |1 | 0 | License chip (deprecated after 1.2.8) |
 |8 | FILETIME | Timestamp when the message was received |
 |8 | FILETIME | Parse duration in microseconds |
