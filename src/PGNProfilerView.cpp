@@ -124,18 +124,10 @@ LRESULT CPGNProfilerView::OnGetdispinfo(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bH
 
 	if (pItem->mask & LVIF_TEXT)
 	{
-//#if _DEBUG
-//		static int prevItem;
-//		if (0 == pItem->iSubItem && prevItem != pItem->iItem)
-//		{
-//			ATLTRACE2(atlTraceDBProvider, 0, L"CPGNProfilerView::OnGetdispinfo(%d, %d)\n", prevItem = pItem->iItem, pItem->iSubItem);
-//		}
-//#endif
 		m_pCurLogger->Lock();	// prevent accessing invalidated m_logStart due to remapping in CTraceReader::HandleProcessLoggerOverlappedResult
 
 		const BYTE* baseAddr = m_pCurLogger->GetMessageData(pItem->iItem);
 		TRC_TYPE trcType = (TRC_TYPE)baseAddr[4];
-		//SQL_QUERY_TYPE cmdType = (SQL_QUERY_TYPE)baseAddr[5];
 
 		switch (trcType)
 		{
@@ -237,18 +229,15 @@ LRESULT CPGNProfilerView::OnContextMenu(UINT uMsg, WPARAM wParam, LPARAM lParam,
 
 			::PostMessage(m_hWnd, WM_NULL, 0, 0); 
 		}
+
 		::DestroyMenu(hMenu);
 	}
-	return 0;//lResult;
+
+	return 0;
 }
 
 LRESULT CPGNProfilerView::OnEraseBkgnd(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
 {
-	//CRect rect;
-	//GetClientRect(&rect);
-
-	//::FillRect((HDC)wParam, &rect, m_palit.m_brBackGndAlt);
-
 	return 1;
 }
 
@@ -413,11 +402,6 @@ void CPGNProfilerView::DrawSelectedItem(const NMCUSTOMDRAW& nmcd)
 	m_pCurLogger->Unlock();
 }
 
-//DWORD CPGNProfilerView::OnPostPaint(int /*idCtrl*/, LPNMCUSTOMDRAW lpNMCustomDraw)
-//{
-//	return CDRF_DODEFAULT;
-//}
-
 DWORD CPGNProfilerView::OnItemPrePaint(int /*idCtrl*/, LPNMCUSTOMDRAW lpNMCustomDraw)
 {
     NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*>(lpNMCustomDraw);
@@ -436,7 +420,6 @@ DWORD CPGNProfilerView::OnItemPrePaint(int /*idCtrl*/, LPNMCUSTOMDRAW lpNMCustom
 	pLVCD->clrTextBk = GetLineColor((TRC_TYPE)baseAddr[4], (SQL_QUERY_TYPE)baseAddr[5]);
 	pLVCD->clrText = m_palit.CrText;
 	m_pCurLogger->Unlock();
-	//pLVCD->clrText = pLVCD->clrTextBk ^ 0x555555;
 
     // Tell Windows to paint the control itself.
     return CDRF_DODEFAULT;
@@ -862,34 +845,14 @@ LRESULT CPGNProfilerView::OnHeaderChanged(int idCtrl, LPNMHDR pnmh, BOOL& bHandl
 {
 	::PostMessage(m_hMainWnd, MYMSG_SAVESETTINGS, OT_COLUI, 0);
 
-	//if (!m_Header.IsWindow() || !m_HdrToolTip.IsWindow())
-	//	return 0;
-
-	//// change tool tip
-	//int iCnt = m_Header.GetItemCount();
-	//if(!iCnt)
-	//	return 0;
-
-	//ASSERT(iCnt == m_HdrToolTip.GetToolCount());
-
-	//for( int i=0; i<iCnt; i++ )
-	//{
-	//	char szbuf[128]="";
-	//	TOOLINFO ti={sizeof(ti)};
-	//	IniToolInfo( i, ti, szbuf );
-	//	m_HdrToolTip.SetToolInfo( &ti );
-	//}
 	return 0;
 }
 
 LRESULT CPGNProfilerView::OnHeaderDraged(int idCtrl, LPNMHDR pnmh, BOOL& bHandled)
 {
-	// force OnHeaderChanged to be called after new position of columns are defined
-	//if (IsWindow(GetList()->m_hWnd))
-	{
-		int iw = GetColumnWidth(0);
-		PostMessage(LVM_SETCOLUMNWIDTH, 0, MAKELPARAM(iw, 0));
-	}
+	int iw = GetColumnWidth(0);
+	PostMessage(LVM_SETCOLUMNWIDTH, 0, MAKELPARAM(iw, 0));
+
 	return 0;
 }
 

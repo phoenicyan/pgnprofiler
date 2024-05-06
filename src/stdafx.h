@@ -46,9 +46,7 @@ extern CAppModule _Module;
 #endif
 
 #include <atlcrack.h>
-//#include <atlcoll.h>
 #include <atlstr.h>
-//#include <atltypes.h>
 #include <atlframe.h>
 #include <atlmisc.h>
 #include <atldlgs.h>

@@ -55,8 +55,6 @@ static int IdMapping[][2] = {
 	{ ID_EDIT_COPY, IDI_EDIT_COPY_DARK },
 	{ ID_CAPTURE, IDI_CAPTURE_DARK },
 	{ ID_PAUSE_CAPTURE, IDI_PAUSE_DARK },
-	//{ ID_CLEAR_LOG, ? },
-	//{ ID_AUTOSCROLL, ? },
 	{ ID_TIMEFORMAT, IDI_TIMEFORMAT_DARK },
 	{ IDI_TIMEFORMATOFF, IDI_TIMEFORMATOFF_DARK },
 	{ ID_FILTER, IDI_FILTER_DARK },
@@ -148,7 +146,7 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BO
 
 	// create command bar
 	HWND hWndCmdBar = m_CmdBar.Create(m_hWnd, rcDefault, NULL, ATL_SIMPLE_CMDBAR_PANE_STYLE);
-#if 1
+
 	m_CmdBar.AttachMenu(GetMenu());
 
 	if (m_optionsForWork.m_dwConnectToHostEnabled)
@@ -170,17 +168,6 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BO
 		HMENU hSubMenu = ::GetSubMenu(m_CmdBar.m_hMenu, 0);
 		::InsertMenuItem(hSubMenu, 0, TRUE, &mii);
 	}
-	//m_hMenu = GetMenu();
-#else
-	TBBUTTON buttons[] =
-	{
-		{ 0, ID_MBAR_FILE, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, INT_PTR(L"File") },
-		{ 0, ID_MBAR_EDIT, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, INT_PTR(L"Edit") },
-		{ 0, ID_MBAR_VIEW, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, INT_PTR(L"View") },
-		{ 0, ID_MBAR_HELP, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, INT_PTR(L"Help") },
-	};
-	m_CmdBar.AddButtons(_countof(buttons), buttons);
-#endif
 
 	// remove old menu
 	SetMenu(NULL);
@@ -327,7 +314,6 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BO
 
 	DisplayWindowTitle();
 
-//CLEANUP:
 	// start trace reader
 	m_traceReader.SetMainWindow(m_hWnd);
 	m_traceReader.Start(&m_explorer.GetRootLogger());
@@ -396,9 +382,6 @@ void CMainFrame::SetupColorTheme(CColorPalette::THEME theme, const vector<COLORR
 
 		CImageListCtrl loggersImages;		// The images
 		loggersImages.CreateFromImage(CColorPalette::THEME_DARK == theme ? IDB_LOGGERS_DARK : IDB_LOGGERS, 16, 0, CLR_DEFAULT, IMAGE_BITMAP, LR_CREATEDIBSECTION);
-
-		// TODO: should we release previous imagelist?
-		//m_explorer.GetImageList();
 
 		m_explorer.SetImageList(loggersImages.Detach(), TVSIL_NORMAL);
 	}
@@ -496,16 +479,12 @@ LRESULT CMainFrame::OnConnectToHost(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*h
 
 LRESULT CMainFrame::OnFileOpen(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-	//CModulePath sCurDir;
-	//CString sPath = sCurDir + _T("..\\");  // Assumes project is build in \Release or \Debug
-
-	// Open file
 	CMyFileDialog dlg(TRUE, PGL_FILE_EXT, _T(""), OFN_HIDEREADONLY|OFN_FILEMUSTEXIST|OFN_EXPLORER, lpcstrFilter);
-	//dlg.m_ofn.lpstrInitialDir = sPath;
 	if (dlg.DoModal() == IDOK)
 	{
 		MakeFileLoggerNode(dlg.m_ofn.lpstrFile, dlg.m_ofn.nFilterIndex == 2, true);
 	}
+
 	return 0;
 }
 
@@ -513,8 +492,6 @@ LRESULT CMainFrame::OnFileSave(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCt
 {
 	USES_XMSGBOXPARAMS
 	CLoggerItemBase* pCurLogger = m_explorer.GetCurrentLoggerPtr();
-	//if (pCurLogger && pCurLogger->IsROmode())
-	//	return 0;	// never save messages from an open RO file
 
 	if (pCurLogger && pCurLogger->GetNumMessages() != 0)
 	{
@@ -1410,16 +1387,10 @@ HWND CMainFrame::CreateMyToolBar(DWORD dwStyle, CColorPalette::THEME theme)
 	font.GetLogFont(lf);
 	WORD cyFontHeight = (WORD)abs(lf.lfHeight);
 
-#if 0
-	TBADDBITMAP tbab = { 0 };
-	tbab.hInst = hInst;
-	tbab.nID = nResourceID;
-	::SendMessage(hWnd, TB_ADDBITMAP, nBmp, (LPARAM)&tbab);
-#else
 	CImageListCtrl images;
 	images.CreateFromImage(nResourceID, 16, 0, CLR_DEFAULT, IMAGE_BITMAP, LR_CREATEDIBSECTION);
 	::SendMessage(hWnd, TB_SETIMAGELIST, 0, (LPARAM)images.Detach());
-#endif
+
 	size_t nItems = btnList.size();
 	CTempBuffer<TBBUTTON, _WTL_STACK_ALLOC_THRESHOLD> buff;
 	TBBUTTON* pTBBtn = buff.Allocate(nItems);

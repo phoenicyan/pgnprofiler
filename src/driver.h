@@ -65,12 +65,6 @@ public:
 	{
 		_val.sVal = 0;
 	}
-
-	//~CLexeme()
-	//{
-	//	if (_type == Parser::token::STRING)
-	//		delete _val.sVal;
-	//}
 };
 
 /** The Driver class brings together all components. It creates an instance of

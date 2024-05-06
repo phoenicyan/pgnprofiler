@@ -26,8 +26,7 @@ enum WPGPropValueType
 	PVT_COLORRGB,
 };
 
-// Constants used in calls to GWCPropertiesCtrl::GetRegisteredFeel()
-// to acquire a GWCPropertyFeel object.
+// Constants used in calls to GetRegisteredFeel()
 #define WPG_FEEL_EDIT			_T("edit")
 #define WPG_FEEL_EDITSPIN		_T("editspin")
 #define WPG_FEEL_EDITPASSWORD	_T("editpwd")

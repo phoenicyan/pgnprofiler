@@ -29,7 +29,6 @@ public:
 		MESSAGE_HANDLER(WM_CTLCOLORDLG,       OnColorDlg) // For dialog background.
 		MESSAGE_HANDLER(WM_CTLCOLORSTATIC,    OnColorDlg) // For static and read only edit.
 		MESSAGE_HANDLER(WM_CTLCOLOREDIT,      OnColorDlg) // For edit boxes
-		//MESSAGE_HANDLER(WM_CTLCOLORBTN,       OnColorDlg) // Owner-drawn only will respond.
 		MESSAGE_HANDLER(WM_CTLCOLORLISTBOX,   OnColorDlg) // List and combo.
 		MESSAGE_HANDLER(WM_DRAWITEM, OnDrawItem)
 		MESSAGE_HANDLER(WM_SETCURSOR, OnSetCursor)
@@ -42,12 +41,7 @@ public:
 		COMMAND_HANDLER(IDC_HOST, CBN_SELCHANGE, OnSelChange)
 
 		CHAIN_MSG_MAP(CSkinWindow<CConnectHostDlg>)
-		//REFLECT_NOTIFICATIONS()
 	END_MSG_MAP()
-
-	//BEGIN_DDX_MAP(CConnectHostDlg)
-	//	DDX_CHECK(IDC_CHK_PARSE, chkParse)
-	//END_DDX_MAP()
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg)
 	{

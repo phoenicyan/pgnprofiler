@@ -36,9 +36,7 @@ public:
 		m_rootLogger.SetName(L"localhost (127.0.0.1)");
 	}
 	
-	//BOOL Select(CLoggerItem* pBlock);
 	BOOL Populate();
-	//BOOL RemoveItem(CLoggerItem* pBlock);
 
 	BOOL PreTranslateMessage(MSG* pMsg);
 
@@ -66,7 +64,6 @@ public:
 	END_MSG_MAP()
 
 	LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-	//LRESULT OnNCPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
 	LRESULT OnContextMenu(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/);

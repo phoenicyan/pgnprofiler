@@ -43,27 +43,8 @@ LRESULT CConnectHostDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /
 	}
 	else
 	{
-#if 0//_DEBUG
-		CButton btnUserPwd = GetDlgItem(IDC_RADIO_USERPWD);
-		btnUserPwd.SetCheck(1);
-
-		EnableControls(TRUE);
-
-#if !LOCAL_DEBUG
-		edtHost.SetWindowText(L"ripper");
-
-		GetDlgItem(IDC_USER).SetWindowText(L"Konstantin");
-		GetDlgItem(IDC_PWD).SetWindowText(L"n/a");
-#else
-		cmbHost.SetWindowText(L"intellisoftdevii");
-
-		GetDlgItem(IDC_USER).SetWindowText(L"Konstantin Izmailov");
-		GetDlgItem(IDC_PWD).SetWindowText(L"n/a");
-#endif
-#else
 		CButton btnSSPI = GetDlgItem(IDC_RADIO_SSPI);
 		btnSSPI.SetCheck(1);
-#endif
 	}
 
 	// register object for message filtering

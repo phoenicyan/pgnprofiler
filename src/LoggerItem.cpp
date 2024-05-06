@@ -69,13 +69,6 @@ BOOL CLoggerItemBase::DeleteChildren()
 	return TRUE;
 }
 
-//void CLoggerItemBase::SetFilterProgressCallback(std::function<void(int)>& fnProgressCallback)
-//{
-//	ATLTRACE2(atlTraceDBProvider, 0, L"CLoggerItemBase::SetFilterProgressCallback: '%s'\n", m_name.c_str());
-//
-//	m_filterProgressSignal.connect(fnProgressCallback);
-//}
-
 BOOL CLoggerItemBase::AddChild(CLoggerItemBase* pBlock)
 {
 	CLoggerTracker::Instance().AddLogger(pBlock);
@@ -318,12 +311,6 @@ int CHostLoggerItem::ListProcessesOnRemoteHost(/*out*/ATL::CString& processes)
 			goto PerServerCleanup;
 		}
 
-		//if (CheckTimeout(start, *cItr, settings))
-		//{
-		//	exitCode = -5;
-		//	goto PerServerCleanup;
-		//}
-
 		ATLTRACE2(atlTraceDBProvider, 0, L"Starting PGNProfiler service on '%s'...\n", m_name.c_str());
 
 		// install self as a remote service and start remote service
@@ -411,12 +398,6 @@ size_t CHostLoggerItem::GetNumErrors() const
 
 size_t CHostLoggerItem::GetNumMessages() const
 {
-	//size_t numMessages = 0;
-	//for (vector<BYTE*>::const_iterator it=m_rgMessages.begin(); it != m_rgMessages.end(); it++)
-	//{
-	//	//TODO: test that message is not cleared
-	//	numMessages++;
-	//}
 	size_t num = !m_filterActive ? m_rgPackedMessages.size() : m_rgFilteredMessages.size();
 	return num;
 }
@@ -430,20 +411,6 @@ const BYTE* CHostLoggerItem::GetMessageData(size_t i) const
 
 	return pLogger->m_logStart + pMessage._v._offset;
 }
-
-//const BYTE* CHostLoggerItem::GetMessageData2(size_t i, LONGLONG* pPackedData) const
-//{
-//	*pPackedData = m_rgPackedMessages[i];
-//
-//	CProcessLoggerItem* pLogger = (CProcessLoggerItem*)(DWORD)(*pPackedData >> 32);
-//	DWORD offset = (DWORD)*pPackedData;
-//
-//	return pLogger->m_logStart + offset;
-//}
-
-//void CHostLoggerItem::SetFilterActive(bool isActive)
-//{
-//}
 
 void CHostLoggerItem::FilterLoggerItems()
 {
@@ -785,14 +752,6 @@ const BYTE* CProcessLoggerItem::GetMessageData(size_t i) const
 	return m_logStart + (!m_filterActive ? m_rgMessageOffsets[i] : m_rgFilteredMessages[i]);
 }
 
-//const BYTE* CProcessLoggerItem::GetMessageData2(size_t i, LONGLONG* pPackedData) const
-//{
-//	DWORD offset = m_rgMessageOffsets[i];
-//	*pPackedData = (LONGLONG)offset | ((LONGLONG)this << 32);
-//
-//	return m_logStart + offset;
-//}
-
 void CProcessLoggerItem::FilterLoggerItems()
 {
 	ATLTRACE2(atlTraceDBProvider, 0, L"CProcessLoggerItem::FilterLoggerItems(%s): '%s'\n", m_filterStr.c_str(), m_name.c_str());
@@ -861,8 +820,6 @@ void CProcessLoggerItem::FilterLoggerItems()
 	}
 
 	m_filterProgressSignal(FILTER_FINISH);
-
-	//return rez;
 }
 
 void CProcessLoggerItem::ClearLog()
@@ -872,29 +829,14 @@ void CProcessLoggerItem::ClearLog()
 
 	m_errorCnt = 0;
 
-	//vector<LONG>::const_iterator itToClear = m_rgMessageOffsets.begin();
-	//LONG toClear = *itToClear;
-
 	vector<CPackedMessage>& parentMsgs = ((CHostLoggerItem*)m_pParent)->GetPackedMessages();
 	for (auto it=parentMsgs.begin(); it != parentMsgs.end(); )
 	{
-		// find message to clear
-		//if (toClear != *it)
-		//{
-		//	it++;
-		//	continue;
-		//}
-
 		// clear the message and fetch next target
 		if (it->_v._itemId == (USHORT)this)
 			it = parentMsgs.erase(it);
 		else
 			it++;
-
-		//itToClear++;
-		//if (itToClear == m_rgMessages.end())
-		//	break;	// nothing left to fetch, done
-		//toClear = *itToClear;
 	}
 
 	m_rgMessageOffsets.clear();

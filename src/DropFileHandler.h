@@ -9,23 +9,18 @@ template <class T> class CDropFilesHandler
 	{
         T* pT = static_cast<T*>(this);
 		ATLASSERT(::IsWindow(pT->m_hWnd));
-		/* I'm ashamed; I rewrote an existing API. Luckily, I don't have to cut my small finger off...
-		CWindow wnd;
-		wnd.Attach(pT->m_hWnd);
-		if (bTurnOn)
-			wnd.ModifyStyleEx(0, WS_EX_ACCEPTFILES);
-		else // Turn drop handling off.
-			wnd.ModifyStyleEx(~WS_EX_ACCEPTFILES, 0);
-		*/
 		::DragAcceptFiles(pT->m_hWnd, bTurnOn);
 	}
+
 	protected:
 		UINT m_nFiles; // Number of dropped files, in case you want to display some kind of progress.
+
 		// We'll use a message map here, so future implementations can, if necessary, handle
 		// more than one message.
 		BEGIN_MSG_MAP(CDropFilesHandler<T>)
 			MESSAGE_HANDLER(WM_DROPFILES, OnDropFiles) 
 		END_MSG_MAP()
+
 		// WM_DROPFILES handler: it calls a T function, with the path to one dropped file each time.
 		LRESULT OnDropFiles(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
 		{
@@ -38,7 +33,9 @@ template <class T> class CDropFilesHandler
 				bHandled = FALSE;
 				return 0;
 			}
+
 			CHDrop<TCHAR> cd(wParam);
+
 			// Your class should have a public member of type HWND (like CWindow does).
 			if (cd.IsInClientRect(pT->m_hWnd))
 			{

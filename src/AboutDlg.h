@@ -89,7 +89,6 @@ public:
 
 	LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 	{
-		//EndDialog(wID);
 		HWND hParent = GetParent();
 		::EnableWindow(hParent, TRUE);
 		m_wndLink.DestroyWindow();
