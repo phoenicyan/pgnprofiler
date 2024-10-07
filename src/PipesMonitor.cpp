@@ -128,27 +128,28 @@ void CPipesMonitor::doMonitor()
 
 	if (dwChangeHandle == INVALID_HANDLE_VALUE)
 	{
-		printf("\n ERROR: FindFirstChangeNotification function failed.\n");
-		ExitProcess(GetLastError());
+		ATLTRACE2(atlTraceDBProvider, 0, _T("** FindFirstChangeNotification function failed.\n"));
+		return; //ExitProcess(GetLastError());
 	}
 
 	// Make a final validation check on our handles.
 	if (dwChangeHandle == NULL)
 	{
-		printf("\n ERROR: Unexpected NULL from FindFirstChangeNotification.\n");
-		ExitProcess(GetLastError());
+		ATLTRACE2(atlTraceDBProvider, 0, _T("** Unexpected NULL from FindFirstChangeNotification.\n"));
+		return; //ExitProcess(GetLastError());
 	}
 
 	HANDLE hDir = CreateFile(L"\\\\.\\Pipe\\", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, 0, NULL);
 	if (hDir == INVALID_HANDLE_VALUE)
 	{
-		ExitProcess(GetLastError());
+		ATLTRACE2(atlTraceDBProvider, 0, _T("** Unable to access Pipe directory.\n"));
+		return; // ExitProcess(GetLastError());
 	}
 
 	while (cancellation_token)
 	{
 		// Wait for notification.
-		//printf("\nWaiting for notification...\n");
+		//ATLTRACE2(atlTraceDBProvider, 3, _T("Waiting for notification...\n"));
 
 		dwWaitStatus = WaitForSingleObject(dwChangeHandle, 500);
 
@@ -161,8 +162,8 @@ void CPipesMonitor::doMonitor()
 			checkIfProviderPipe(hDir);
 			if (FindNextChangeNotification(dwChangeHandle) == FALSE)
 			{
-				//printf("\n ERROR: FindNextChangeNotification function failed.\n");
-				ExitProcess(GetLastError());
+				ATLTRACE2(atlTraceDBProvider, 0, _T("** FindNextChangeNotification function failed.\n"));
+				return; //ExitProcess(GetLastError());
 			}
 			break;
 
@@ -172,12 +173,12 @@ void CPipesMonitor::doMonitor()
 			// than INFINITE is used in the Wait call and no changes occur.
 			// In a single-threaded environment you might not want an
 			// INFINITE wait.
-			//printf("\nNo changes in the timeout period.\n");
+			//ATLTRACE2(atlTraceDBProvider, 0, _T("No changes in the timeout period.\n"));
 			break;
 
 		default:
-			//printf("\n ERROR: Unhandled dwWaitStatus.\n");
-			ExitProcess(GetLastError());
+			ATLTRACE2(atlTraceDBProvider, 0, _T("** Unhandled dwWaitStatus.\n"));
+			//ExitProcess(GetLastError());
 			break;
 		}
 	}
@@ -193,8 +194,8 @@ void CPipesMonitor::checkIfProviderPipe(HANDLE hPipe)
 	PROCNTQDF NtQueryDirectoryFile = (PROCNTQDF)GetProcAddress(GetModuleHandle(L"ntdll"), "NtQueryDirectoryFile");
 	if (!NtQueryDirectoryFile)
 	{
-		printf("\n ERROR: Could not access NtQueryDirectoryFile.\n");
-		ExitProcess(GetLastError());
+		ATLTRACE2(atlTraceDBProvider, 0, _T("** Could not access NtQueryDirectoryFile.\n"));
+		return; //ExitProcess(GetLastError());
 	}
 
 	PFILE_QUERY_DIRECTORY DirInfo = (PFILE_QUERY_DIRECTORY)_alloca(1024);
@@ -261,7 +262,6 @@ void CPipesMonitor::checkIfProviderPipe(HANDLE hPipe)
 	}
 }
 
-#if 1
 /// appList - destination list of PIDs;
 /// entries - [in] max size of PIDs, [out] actual number of PIDs in appList;
 /// Return: 0 - success, otherwise error.
@@ -338,4 +338,3 @@ DWORD GetAppList(DWORD* appList, /*inout*/int* entries)
 
 	return 0;
 }
-#endif

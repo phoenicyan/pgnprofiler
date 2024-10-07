@@ -146,8 +146,10 @@ bool CCsvReader::ReadNextRecord(bool onlyReadHeaders, bool skipToNextLine)
 				if (headerName.empty() || trim(headerName).length() == 0)
 				{
 					char buf[32];
+					_itoa_s(i, buf, _countof(buf), 10);
+
 					headerName = DefaultHeaderName;
-					headerName.append(_itoa(i, buf, 10));
+					headerName.append(buf);
 				}
 				_fieldHeaders[i] = headerName;
 				_fieldHeaderIndexes.insert({ headerName, i });

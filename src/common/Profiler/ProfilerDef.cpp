@@ -5,9 +5,9 @@
  ***                                                                   ***
  *************************************************************************/
 
-
 #include "stdafx.h"
 #include "ProfilerDef.h"
+#include <assert.h>
 
 UINT WM_PGNPROF_STATUS = RegisterWindowMessage(L"PGNPROF_STATUS");
 
