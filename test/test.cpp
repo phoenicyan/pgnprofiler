@@ -22,7 +22,7 @@ using std::cout;
 using std::endl;
 
 auto USAGE = R"R(Usage:
-    Test.exe [-p <path>] [-w] [-h]
+    Test.exe [-p <path_wc>] [-r <number>] [-w] [-h]
 Where:
     -p <path_wc>, --path
       Path to folder containing trace messages. Example: -p D:\data\*.pgl.

@@ -2,11 +2,14 @@
 ```
 > test.exe -h
 Usage:
-    Test.exe [-p <path>] [-w] [-h]
+    Test.exe [-p <path_wc>] [-r <number>] [-w] [-h]
 Where:
-    -p, --path
+    -p <path_wc>, --path
       Path to folder containing trace messages. Example: -p D:\data\*.pgl.
       Only files with .pgl or .csv extension can be processed.
+
+    -r <number>, --repeat
+      Repeat everything <number> times.
 
     -w, --wait
       Wait for PGNProfiler to start before sending messages.
