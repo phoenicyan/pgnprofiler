@@ -24,9 +24,12 @@ using std::endl;
 auto USAGE = R"R(Usage:
     Test.exe [-p <path>] [-w] [-h]
 Where:
-    -p, --path
+    -p <path_wc>, --path
       Path to folder containing trace messages. Example: -p D:\data\*.pgl.
       Only files with .pgl or .csv extension can be processed.
+
+    -r <number>, --repeat
+      Repeat everything <number> times.
 
     -w, --wait
       Wait for PGNProfiler to start before sending messages.
@@ -50,6 +53,10 @@ int main(int argc, char** argv) {
     }
 
     bool bWait = input.cmdOptionExists("-w") || input.cmdOptionExists("--wait");
+    const std::string& sRepeat = input.getCmdOption("-r");
+    int repeat = std::stoi(sRepeat);
+    if (repeat < 0 || repeat > 10)
+        repeat = 0;
 
     ProfilerClientInit();
     Sleep(100);
@@ -57,7 +64,7 @@ int main(int argc, char** argv) {
     system_clock::time_point start = system_clock::now();
     size_t files = 0, messages = 0;
     const std::string& path = input.getCmdOption("-p");
-    if (!path.empty()) {
+    if (!path.empty()) do {
         cout << "Scanning " << path << "...\n";
         WIN32_FIND_DATAA findData;
         HANDLE hFind = ::FindFirstFileA(path.c_str(), &findData);
@@ -122,7 +129,7 @@ int main(int argc, char** argv) {
 
             FindClose(hFind);
         }
-    }
+    } while (repeat--);
 
     duration<double> elapsed_seconds = system_clock::now() - start;
     cout << "Files: " << files << "  Messages: " << messages << "  Elapsed: " << elapsed_seconds.count() << endl;

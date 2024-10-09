@@ -459,7 +459,10 @@ BOOL CPGNProfilerView::ShowMessages(CLoggerItemBase* pLogger)
 	{	// messages were cleared
 		m_prevTopIndex = 0;
 		m_numMessages = 0;
-		DeleteAllItems();
+
+		// do not use DeleteAllItems(); for performance reasons!
+		SetItemCountEx(0, 0);
+
 		return TRUE;
 	}
 
