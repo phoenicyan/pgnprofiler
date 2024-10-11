@@ -25,7 +25,7 @@ CCsvFileLoggerItem::~CCsvFileLoggerItem()
 	CloseLogFile();
 }
 
-int CCsvFileLoggerItem::OpenLogFile()
+int CCsvFileLoggerItem::OpenLogFile(DWORD dwReserved)
 {
 	// open file
 	CW2A path(m_path.c_str());

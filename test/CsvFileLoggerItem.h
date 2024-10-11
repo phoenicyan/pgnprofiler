@@ -26,7 +26,7 @@ public:
 
 	~CCsvFileLoggerItem();
 
-	virtual int OpenLogFile();
+	int OpenLogFile(DWORD dwReserved = 0) override;
 
 	virtual map<DWORD, wstring>* GetLogger2AppnameMap();
 

@@ -54,8 +54,8 @@ int main(int argc, char** argv) {
 
     bool bWait = input.cmdOptionExists("-w") || input.cmdOptionExists("--wait");
     const std::string& sRepeat = input.getCmdOption("-r");
-    int repeat = std::stoi(sRepeat);
-    if (repeat < 0 || repeat > 10)
+    int repeat = sRepeat.empty() ? 0 : std::stoi(sRepeat);
+    if (repeat < 0 || repeat > 100'000)
         repeat = 0;
 
     ProfilerClientInit();
@@ -75,8 +75,6 @@ int main(int argc, char** argv) {
             strcpy_s(szPath, drive);
             strcat_s(szPath, dir);
 
-            bool csv = false;
-
             do
             {
                 if ((findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
@@ -84,6 +82,8 @@ int main(int argc, char** argv) {
                     CA2W lpFileName(findData.cFileName);
                     wstring lpFilePath((LPCTSTR)CA2W(szPath));
                     lpFilePath.append((LPCTSTR)lpFileName);
+
+                    bool csv = strlen(findData.cFileName) > 4 && strcmp(findData.cFileName + strlen(findData.cFileName) - 4, ".csv") == 0;
 
                     CLoggerItemBase* pLogFile;
                     if (csv)

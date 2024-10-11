@@ -535,7 +535,6 @@ public:
 
 		for_each(m_pipes.begin(), m_pipes.end(), [&](pair<HANDLE, DH_PIPE*> p)
 		{
-			//DWORD payloadSize;
 			if (TRC_ERROR == (TRC_TYPE)baseAddr[4])
 			{
 				CProfERRORmsg srcmsg((BYTE*)baseAddr, true);
@@ -551,25 +550,8 @@ public:
 				dstmsg.SessionId = srcmsg.SessionId;
 				dstmsg.CommandId = srcmsg.CommandId;
 
-				//if (logContext != 0)
-				//{
-				//	const string& database(logContext->GetDbName());
-				//	dstmsg.Database = PROFMSG_TEXT(database.length() + 1, database.c_str());
-
-				//	const string& user(logContext->GetUser());
-				//	dstmsg.UserName = PROFMSG_TEXT(user.length() + 1, user.c_str());
-				//}
-				//else
-				//{
-					dstmsg.Database = PROFMSG_TEXT(1, "");
-					dstmsg.UserName = PROFMSG_TEXT(1, "");
-				//}
-
-				//if (sError == nullptr)
-				//	sError = "<null>";
-
-				//if (sClientSQL == nullptr)
-				//	sClientSQL = "<null>";
+				dstmsg.Database = srcmsg.Database;
+				dstmsg.UserName = srcmsg.UserName;
 
 				dstmsg.ErrorText = srcmsg.ErrorText;
 				dstmsg.ClientSQL = srcmsg.ClientSQL;
@@ -604,25 +586,8 @@ public:
 				dstmsg.SessionId = srcmsg.SessionId;
 				dstmsg.CommandId = srcmsg.CommandId;
 
-				//if (logContext != 0)
-				//{
-				//	const string& database(logContext->GetDbName());
-				//	dstmsg.Database = PROFMSG_TEXT(database.length() + 1, database.c_str());
-
-				//	const string& user(logContext->GetUser());
-				//	profmsg.UserName = PROFMSG_TEXT(user.length() + 1, user.c_str());
-				//}
-				//else
-				//{
-					dstmsg.Database = PROFMSG_TEXT(1, "");
-					dstmsg.UserName = PROFMSG_TEXT(1, "");
-				//}
-
-				//if (0 == sClientSQL)
-				//	sClientSQL = "";
-
-				//if (0 == sExecutedSQL)
-				//	sExecutedSQL = "";
+				dstmsg.Database = srcmsg.Database;
+				dstmsg.UserName = srcmsg.UserName;
 
 				dstmsg.ClientSQL = srcmsg.ClientSQL;
 				dstmsg.ExecutedSQL = srcmsg.ExecutedSQL;
