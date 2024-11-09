@@ -115,7 +115,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>3rdparty;3rdparty\jsoncpp\include;3rdparty\OwnerDrawMenu;3rdparty\RegUtil;3rdparty\rethread;3rdparty\THREADSYNC;3rdparty\WTL;3rdparty\WTLPropGrid;COMMON\CRC;COMMON\CsvReader;COMMON\MyDialogs;COMMON\Palit;COMMON\Profiler;COMMON\Optimizer;COMMON\Tokenizer;C:\Program Files (x86)\boost_1_70_0;C:\Program Files (x86)\Common Files\System</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdparty;3rdparty\iocp;3rdparty\jsoncpp\include;3rdparty\OwnerDrawMenu;3rdparty\RegUtil;3rdparty\rethread;3rdparty\THREADSYNC;3rdparty\WTL;3rdparty\WTLPropGrid;COMMON\CRC;COMMON\CsvReader;COMMON\MyDialogs;COMMON\Palit;COMMON\Profiler;COMMON\Optimizer;COMMON\Tokenizer;C:\Program Files (x86)\boost_1_70_0;C:\Program Files (x86)\Common Files\System</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;_DEBUG;USE_PARF=1;BOOST_REGEX_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -130,6 +130,7 @@
       <ExceptionHandling>Async</ExceptionHandling>
       <BrowseInformation>true</BrowseInformation>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -137,7 +138,7 @@
       <AdditionalIncludeDirectories>3rdparty\WTL;3rdparty\WTLPropGrid;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Psapi.lib;Ws2_32.lib;Mpr.lib;Rpcrt4.lib;dwmapi.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ntdll.lib;Psapi.lib;Ws2_32.lib;Mpr.lib;Rpcrt4.lib;dwmapi.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files (x86)\boost_1_70_0\stage\lib32;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -164,7 +165,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>3rdparty;3rdparty\jsoncpp\include;3rdparty\OwnerDrawMenu;3rdparty\RegUtil;3rdparty\rethread;3rdparty\THREADSYNC;3rdparty\WTL;3rdparty\WTLPropGrid;COMMON\CRC;COMMON\CsvReader;COMMON\MyDialogs;COMMON\Palit;COMMON\Profiler;COMMON\Optimizer;COMMON\Tokenizer;C:\Program Files (x86)\boost_1_70_0;C:\Program Files (x86)\Common Files\System</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdparty;3rdparty\iocp;3rdparty\jsoncpp\include;3rdparty\OwnerDrawMenu;3rdparty\RegUtil;3rdparty\rethread;3rdparty\THREADSYNC;3rdparty\WTL;3rdparty\WTLPropGrid;COMMON\CRC;COMMON\CsvReader;COMMON\MyDialogs;COMMON\Palit;COMMON\Profiler;COMMON\Optimizer;COMMON\Tokenizer;C:\Program Files (x86)\boost_1_70_0;C:\Program Files (x86)\Common Files\System</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;_DEBUG;USE_PARF=1;BOOST_REGEX_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -179,6 +180,7 @@
       <ExceptionHandling>Async</ExceptionHandling>
       <BrowseInformation>true</BrowseInformation>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -186,7 +188,7 @@
       <AdditionalIncludeDirectories>3rdparty\WTL;3rdparty\WTLPropGrid;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Psapi.lib;Ws2_32.lib;Mpr.lib;Rpcrt4.lib;dwmapi.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ntdll.lib;Psapi.lib;Ws2_32.lib;Mpr.lib;Rpcrt4.lib;dwmapi.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files (x86)\boost_1_70_0\stage\lib64;3rdparty\WTLPropGrid\x64\$(Configuration);$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -212,7 +214,7 @@
       <ProxyFileName>PGNProfiler_p.c</ProxyFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>3rdparty;3rdparty\jsoncpp\include;3rdparty\OwnerDrawMenu;3rdparty\RegUtil;3rdparty\rethread;3rdparty\THREADSYNC;3rdparty\WTL;3rdparty\WTLPropGrid;COMMON\CRC;COMMON\CsvReader;COMMON\MyDialogs;COMMON\Palit;COMMON\Profiler;COMMON\Optimizer;COMMON\Tokenizer;C:\Program Files (x86)\boost_1_70_0;C:\Program Files (x86)\Common Files\System</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdparty;3rdparty\iocp;3rdparty\jsoncpp\include;3rdparty\OwnerDrawMenu;3rdparty\RegUtil;3rdparty\rethread;3rdparty\THREADSYNC;3rdparty\WTL;3rdparty\WTLPropGrid;COMMON\CRC;COMMON\CsvReader;COMMON\MyDialogs;COMMON\Palit;COMMON\Profiler;COMMON\Optimizer;COMMON\Tokenizer;C:\Program Files (x86)\boost_1_70_0;C:\Program Files (x86)\Common Files\System</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;NDEBUG;USE_PARF=1;BOOST_REGEX_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Async</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -222,6 +224,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -229,7 +232,7 @@
       <AdditionalIncludeDirectories>3rdparty\WTL;3rdparty\WTLPropGrid;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Psapi.lib;Ws2_32.lib;Mpr.lib;Rpcrt4.lib;dwmapi.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ntdll.lib;Psapi.lib;Ws2_32.lib;Mpr.lib;Rpcrt4.lib;dwmapi.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files (x86)\boost_1_70_0\stage\lib32;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -257,7 +260,7 @@
       <ProxyFileName>PGNProfiler_p.c</ProxyFileName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>3rdparty;3rdparty\jsoncpp\include;3rdparty\OwnerDrawMenu;3rdparty\RegUtil;3rdparty\rethread;3rdparty\THREADSYNC;3rdparty\WTL;3rdparty\WTLPropGrid;COMMON\CRC;COMMON\CsvReader;COMMON\MyDialogs;COMMON\Palit;COMMON\Profiler;COMMON\Optimizer;COMMON\Tokenizer;C:\Program Files (x86)\boost_1_70_0;C:\Program Files (x86)\Common Files\System</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>3rdparty;3rdparty\iocp;3rdparty\jsoncpp\include;3rdparty\OwnerDrawMenu;3rdparty\RegUtil;3rdparty\rethread;3rdparty\THREADSYNC;3rdparty\WTL;3rdparty\WTLPropGrid;COMMON\CRC;COMMON\CsvReader;COMMON\MyDialogs;COMMON\Palit;COMMON\Profiler;COMMON\Optimizer;COMMON\Tokenizer;C:\Program Files (x86)\boost_1_70_0;C:\Program Files (x86)\Common Files\System</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WINDOWS;STRICT;NDEBUG;USE_PARF=1;BOOST_REGEX_NO_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Async</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -267,6 +270,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -274,7 +278,7 @@
       <AdditionalIncludeDirectories>3rdparty\WTL;3rdparty\WTLPropGrid;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Psapi.lib;Ws2_32.lib;Mpr.lib;Rpcrt4.lib;dwmapi.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ntdll.lib;Psapi.lib;Ws2_32.lib;Mpr.lib;Rpcrt4.lib;dwmapi.lib;uxtheme.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files (x86)\boost_1_70_0\stage\lib64;3rdparty\WTLPropGrid\x64\$(Configuration);$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem>Windows</SubSystem>
       <DelayLoadDLLs>
@@ -289,6 +293,12 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="3rdparty\iocp\UnlimitedWait.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="COMMON\CRC\Crc32.cpp" />
     <ClCompile Include="COMMON\CsvReader\CsvReader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
@@ -503,6 +513,7 @@
     <ClCompile Include="3rdparty\RegUtil\RegSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3rdparty\iocp\UnlimitedWait.h" />
     <ClInclude Include="3rdparty\WTLPropGrid\WTLPropGrid.h" />
     <ClInclude Include="COMMON\CommonCfg.h" />
     <ClInclude Include="COMMON\CRC\Crc32.h" />

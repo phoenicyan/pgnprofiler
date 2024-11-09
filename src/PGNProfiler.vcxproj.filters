@@ -67,6 +67,9 @@
     <Filter Include="3rdparty\jsoncpp">
       <UniqueIdentifier>{24859739-3559-45d5-8e6d-e343f17888e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="3rdparty\iocp">
+      <UniqueIdentifier>{be8b6b3a-75f1-44d7-988c-ddc37f2c7829}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DetailsView.cpp">
@@ -257,6 +260,9 @@
     </ClCompile>
     <ClCompile Include="3rdparty\THREADSYNC\CriticalSection.cpp">
       <Filter>3rdparty\ThreadSync</Filter>
+    </ClCompile>
+    <ClCompile Include="3rdparty\iocp\UnlimitedWait.cpp">
+      <Filter>3rdparty\iocp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -457,6 +463,9 @@
     </ClInclude>
     <ClInclude Include="gui\MySplitterWindowT.h">
       <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rdparty\iocp\UnlimitedWait.h">
+      <Filter>3rdparty\iocp</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -246,3 +246,43 @@ I included sample.pgl file (in miscdata directory). It can be used only for view
 Note: more information can be found in the Intellisoft's [Developers Manual](https://www.pgoledb.com/index.php/download?task=download&cid[0]=26) and the [Forum](https://www.pgoledb.com/index.php/myforum).
 
 Note: I described the approach to the messages filtration here: https://www.codeproject.com/Articles/51386/Yet-Another-Concurrent-Expression-Evaluator.
+
+## Application Design Considerations
+
+Since the profiler application was intended to be used on Windows only and should have a small size and high performance, the following dev tools were chosen:
+* Visual Studio Community;
+* C++, boost;
+* Windows Template Library (WTL);
+
+### UI Library
+
+I considered raw Win32, MFC, WTL, and Qt for UI. MFC was rejected because of the size overhead being too high. Qt was unfamiliar and unaffordable. Raw Win32 for UI was too tedious/verbose. So, the best option known at that time, around 2008, was WTL.
+
+### Communication of events to the Profiler
+
+I think the use of named pipes is sufficient for the purpose. The sender side (PGNP Provider) uses overlapped write to the pipe if it is open. The receiver side (PGNProfiler) reads from pipe(s) and stores the messages in a work file asynchronously. The work file is mapped to memory and used for displaying the messages.
+
+Initially, I used WaitForMultipleObjects for the overlapped read from the named pipes, assuming that no more than 64 applications would run the PGNP Provider simultaneously. Later, I added support for IO Completion Ports to the CTraceReader and, therefore, removed the limitation on the number of processes that could be sources of messages.
+
+### Thread safety in Profiler
+
+| Class           | Resource      | Protection                    | Notes                                             |
+|-----------------|---------------|-------------------------------|---------------------------------------------------|
+| CExplorerView   | m_logFiles    | m_rootLogger.Lock()/Unlock()  | AddLogFile, RemoveClearedLogFiles                 |
+|                 | m_remoteHosts | --/--/--                      | AddHost                 |
+| CProcessLoggerItem | CriticalSectionLock lock(_lock) | m_dwMMFsize, m_logWritePos, m_logStart, m_hLogFile, m_hMapping | GrowLogFile | 
+
+
+### Collecting trace from remote host
+
+This advanced feature was created out of curiosity of how to inject a process on a remote host, and comminicate with it. See implementation in CRemoteApi class.
+
+### Discovery of processes for profiling
+
+There are two scenarios for discovering the processes that are senders of messages: manual and automatic.
+
+The manual scenario is when the user clicks the Refresh menu item in the PGNP-Explorer. The PGNProfiler scans available pipes with the names pgnprof_nnn where nnn is ProcessID. Then, it resolves the ProcessID into the process name and displays the name in the PGNP-Explorer.
+
+The "automatic" scenario is intended to determine which process is a sender of messages automatically. I initially tried to broadcast a registered Windows message from the PGNProfiler. Also, I created a thread that waits for FileChangeNotification in \\.\pipe folder (CPipesMonitor). However, those approaches did not allow for capturing some initial messages from senders. Therefore, I rewrote the CPipesMonitor to receive notifications about PGNP.DLL load/unload via transacted named pipe.
+
+See the doc\pgnprofiler.drawio diagrams for additional details.

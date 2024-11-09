@@ -19,13 +19,13 @@ protected:
 	DWORD				m_dwTraceLevel;
 
 	list<CLoggerItemBase*> m_children;
-	CLoggerItemBase* m_pParent;
+	CLoggerItemBase*	m_pParent;
 	FILETIME			m_initialTime;
 	wstring				m_filterStr;
 	bool				m_filterActive;
 	bool				m_bROmode;			// true for read-only file
 
-	const wstring* m_psWorkPath;		// points to MainFrame variable containing WorkPath option
+	const wstring*		m_psWorkPath;		// points to MainFrame variable containing WorkPath option
 
 public:
 	// Constructor / destructor

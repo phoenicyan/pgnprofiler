@@ -9,10 +9,14 @@
 
 class CHostLoggerItem;
 
-class CTraceReader
+#include "UnlimitedWait.h"
+
+class CTraceReader final
 {
+	UnlimitedWait* volatile m_pUnlimitedWait;
+	HANDLE m_hQuit;
 	DWORD m_threadId;
-	HWND m_mainWindow, m_hWnd;
+	HWND m_mainWindow;
 	CRITICAL_SECTION m_loggersCS;		// guard for m_loggers collection
 	list<CHostLoggerItem*> m_loggers;
 
@@ -20,20 +24,20 @@ public:
 	CTraceReader(void);
 	~CTraceReader(void);
 
-	void SetMainWindow(HWND mainWindow);
+	inline UnlimitedWait* GetUnlimitedWait()
+	{
+		ATLASSERT(m_pUnlimitedWait != nullptr);
+		return m_pUnlimitedWait;
+	}
+
 	DWORD Start(CHostLoggerItem* pLogger);
 	void StopAll();
 
+	static BOOL WINAPI HandleProcessLoggerOverlappedResult(/*CProcessLoggerItem&*/PVOID lpObjectContext, HANDLE hObject);
+	static BOOL WINAPI HandleHostLoggerOverlappedResult(/*CHostLoggerItem&*/PVOID lpObjectContext, HANDLE hObject);
+
 protected:
 	static DWORD WINAPI ThreadProc(LPVOID);
-	static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	
-	HWND CreateVirtualWindow();
-	void DestroyVirtualWindow(HWND hWnd);
-
-	void OnTimer(HWND hWnd, int timerID);
-
-	void HandleProcessLoggerOverlappedResult(CProcessLoggerItem& processLogger);
-
-	void HandleHostLoggerOverlappedResult(CHostLoggerItem& hostLogger);
+	static VOID WINAPI OnTimeoutCallback(PVOID lpWaitContext);
+	static VOID WINAPI OnApcCallback(PVOID lpWaitContext);
 };

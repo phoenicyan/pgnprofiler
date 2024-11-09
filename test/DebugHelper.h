@@ -51,6 +51,13 @@ struct CMDPROFILE
 		return (_elapsed = (TRC_TIME)(_end.QuadPart - _begin.QuadPart));
 	}
 
+	inline TRC_TIME StopStart(void)
+	{
+		Stop();
+		_begin = _end;
+		return _elapsed;
+	}
+
 	inline void Reset()
 	{
 		memset(this, 0, sizeof CMDPROFILE);
@@ -119,9 +126,9 @@ string StringFormat(const char* format, ...);
 
 #define INCREMENT_ROWSCOUNT	__profile._rows++;
 #define SET_ROWSCOUNT(x)	__profile._rows = (DWORD)x;
-#define SET_EXEC_TIME		if (__profile._traceEnabled) { __profile._execute = __profile.Stop(); __profile.Start(); }
-#define ADD_EXEC_TIME		if (__profile._traceEnabled) { __profile._execute += __profile.Stop(); __profile.Start(); }
-#define SET_GETDATA_TIME	if (__profile._traceEnabled) { __profile._getdata = __profile.Stop(); __profile.Start(); }
+#define SET_EXEC_TIME		if (__profile._traceEnabled) { __profile._execute = __profile.StopStart(); }
+#define ADD_EXEC_TIME		if (__profile._traceEnabled) { __profile._execute += __profile.StopStart(); }
+#define SET_GETDATA_TIME	if (__profile._traceEnabled) { __profile._getdata = __profile.StopStart(); }
 #define SET_CURSOR_TYPE(c)	__profile._cursor = c;
 
 #define END_PROFILING_SQL(cmdType, clientsql, executedsql)																\

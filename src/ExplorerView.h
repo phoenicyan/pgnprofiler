@@ -134,7 +134,8 @@ public:
 	void CancelFilters();
 
 private:
-	CLoggerItemBase* FindLogger(const list<CLoggerItemBase*>& loggers, const WCHAR* strText);
+	template<class T>
+	T* FindLogger(const list<T*>& loggers, const WCHAR* strText);
 
 	HTREEITEM _PopulateTree(const CLoggerItemBase* pBlock, HTREEITEM hParent);
 	void _UpdateHostIcon(const CLoggerItemBase* pBlock, HTREEITEM hParent);

@@ -10,7 +10,8 @@
 #include <ATLComTime.h>
 
 class CLoggerItemBase;
+class UnlimitedWait;
 
 extern DWORD ProfilerTimerInit();
 extern DWORD GetAppList(DWORD* appList, /*inout*/int* entries);
-extern void CaptureToggle(CLoggerItemBase* pBlock);
+extern void CaptureToggle(CLoggerItemBase* pBlock, UnlimitedWait* pUnlimitedWait);

@@ -281,7 +281,7 @@ public:
 	void pipeCreatedCallback(int pid);
 	void pipeClosedCallback(int pid);
 	
-	CColorPalette& GetPalit() { return m_palit; }
+	inline CColorPalette& GetPalit() { return m_palit; }
 
 private:
 	HWND CreateMyToolBar(DWORD dwStyle, CColorPalette::THEME theme);		// different implementation of CreateSimpleToolBar();

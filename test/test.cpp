@@ -59,7 +59,8 @@ int main(int argc, char** argv) {
         repeat = 0;
 
     ProfilerClientInit();
-    Sleep(100);
+
+    cout << "Initialization completed.\n";
 
     system_clock::time_point start = system_clock::now();
     size_t files = 0, messages = 0;
@@ -134,7 +135,7 @@ int main(int argc, char** argv) {
     duration<double> elapsed_seconds = system_clock::now() - start;
     cout << "Files: " << files << "  Messages: " << messages << "  Elapsed: " << elapsed_seconds.count() << endl;
 
-    Sleep(1000);
+    Sleep(100);
 
     ProfilerClientUninit();
 

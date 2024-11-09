@@ -9,18 +9,6 @@
 #include "CriticalSection.h"
 #include "PackedMessage.h"
 
-CPackedMessage CPackedMessage::Make(CLoggerItemBase* pLoggerItem, LONGLONG offset)
-{
-	BUILD_BUG_ON(sizeof(CPackedMessage) != 8);
-
-	CPackedMessage msg;
-
-	msg._v._offset = offset;
-	msg._v._itemId = (LONG_PTR)pLoggerItem;
-
-	return msg;
-}
-
 static CLoggerTracker* _pTracker;
 static CriticalSection _lock;
 
@@ -34,23 +22,27 @@ CLoggerTracker& CLoggerTracker::Instance()
 	return *_pTracker;
 }
 
-void CLoggerTracker::AddLogger(CLoggerItemBase* pLoggerItem)
+void CLoggerTracker::AddLogger(USHORT itemId, CLoggerItemBase* pLoggerItem)
 {
-	ATLTRACE2(atlTraceDBProvider, 0, "CLoggerTracker::AddLogger(item=%04x)\n", (USHORT)pLoggerItem);
+	ATLTRACE2(atlTraceDBProvider, 0, "CLoggerTracker::AddLogger(item=%d)\n", itemId);
 
 	CriticalSectionLock lock(_lock);
-	_pTracker->_loggersMap.insert(std::make_pair((USHORT)pLoggerItem, pLoggerItem));
+	ATLASSERT(_pTracker->_loggersMap.find(itemId) == _pTracker->_loggersMap.end());
+	_pTracker->_loggersMap.insert(std::make_pair(itemId, pLoggerItem));
 }
 
 void CLoggerTracker::RemoveLogger(CLoggerItemBase* pLoggerItem)
 {
-	ATLTRACE2(atlTraceDBProvider, 0, "CLoggerTracker::RemoveLogger(item=%04x)\n", (USHORT)pLoggerItem);
+	ATLTRACE2(atlTraceDBProvider, 0, "CLoggerTracker::RemoveLogger(%p)\n", pLoggerItem);
 
 	CriticalSectionLock lock(_lock);
-	auto it = _pTracker->_loggersMap.find((USHORT)pLoggerItem);
-
-	if (it != _pTracker->_loggersMap.end())
-		_pTracker->_loggersMap.erase(it);
+	for (auto it = _pTracker->_loggersMap.begin(); it != _pTracker->_loggersMap.end(); )
+	{
+		if (pLoggerItem == it->second)
+			it = _pTracker->_loggersMap.erase(it);
+		else
+			it++;
+	}
 }
 
 CLoggerItemBase* CLoggerTracker::GetLogger(USHORT itemId)

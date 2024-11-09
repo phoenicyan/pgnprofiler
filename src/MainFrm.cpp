@@ -315,7 +315,6 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BO
 	DisplayWindowTitle();
 
 	// start trace reader
-	m_traceReader.SetMainWindow(m_hWnd);
 	m_traceReader.Start(&m_explorer.GetRootLogger());
 
 	// register object for message filtering and idle updates
@@ -920,29 +919,27 @@ BOOL Is64bitProcess(HANDLE hProcess)
 
 void CMainFrame::CheckAndAddProcessLoggerNode(LPCTSTR pProcessName, DWORD pid, bool bIs64bitProcess, map<CLoggerItemBase*, LOGGER_STATE>& statesMap, CLoggerItemBase& rootLogger)
 {
-	ATLTRACE2(atlTraceDBProvider, 2, L"CMainFrame::CheckAndAddProcessLoggerNode('%s', root='%s')\n", pProcessName, rootLogger.GetName());
+	ATLTRACE2(atlTraceDBProvider, 0, L"CMainFrame::CheckAndAddProcessLoggerNode('%s', root='%s')\n", pProcessName, rootLogger.GetName());
 
-	list<CLoggerItemBase*>& processes = const_cast<list<CLoggerItemBase*>&>(rootLogger.GetChildren());
+	auto processes = rootLogger.GetChildren();
 
 	// find process
 	CProcessLoggerItem* pProcess = 0;
-	for (list<CLoggerItemBase*>::const_iterator it = processes.begin(); it != processes.end(); it++)
+	for (auto it = processes.cbegin(); it != processes.cend(); it++)
 	{
 		wstring name((*it)->GetName());
 		if (name == pProcessName)
 		{
 			pProcess = (CProcessLoggerItem*)*it;
-			map<CLoggerItemBase*, LOGGER_STATE>::const_iterator statesIt = statesMap.find(pProcess);
-			LOGGER_STATE state = LS_PAUSED;
-			if (statesIt != statesMap.end())
-				state = statesIt->second;
+			auto statesIt = statesMap.find(pProcess);
+			LOGGER_STATE state = statesIt != statesMap.end() ? statesIt->second : LS_PAUSED;
 			if (LS_TERMINATED == state)
 			{
 				state = (*it)->GetParent() != nullptr ? (*it)->GetParent()->GetState() : LS_PAUSED;	// the state cannot be terminated at this point because we were able to find the process! Set same state as parent.
 				if (LS_RUN == state)
 				{
 					pProcess->SetState(LS_PAUSED);
-					CaptureToggle(pProcess);
+					CaptureToggle(pProcess, m_traceReader.GetUnlimitedWait());
 				}
 			}
 
@@ -955,8 +952,11 @@ void CMainFrame::CheckAndAddProcessLoggerNode(LPCTSTR pProcessName, DWORD pid, b
 	if (pProcess == 0 && wcsnicmp(L"PGNProfiler.exe", pProcessName, 15) != 0 &&	// do not add PGNProfiler.exe
 		wcsnicmp(L"PGNPUpdate.exe", pProcessName, 14) != 0)					// do not add PGNPUpdate.exe
 	{
+		ATLTRACE2(atlTraceDBProvider, 0, L"CMainFrame::CheckAndAddProcessLoggerNode(): open log file\n");
+
 		pProcess = new CProcessLoggerItem(pProcessName, &rootLogger, LS_PAUSED, m_optionsForWork.m_llMaxLogFileSize, bIs64bitProcess);
 		pProcess->SetPID(pid);
+		pProcess->SetMainWindow(m_hWnd);
 		if (pProcess->OpenLogFile(m_optionsForWork.m_dwDeleteWorkFiles) == 0)
 		{
 			rootLogger.AddChild(pProcess);
@@ -964,7 +964,7 @@ void CMainFrame::CheckAndAddProcessLoggerNode(LPCTSTR pProcessName, DWORD pid, b
 			LOGGER_STATE rootState = rootLogger.GetState();
 			if (rootState == LS_RUN)
 			{
-				CaptureToggle(pProcess);
+				CaptureToggle(pProcess, m_traceReader.GetUnlimitedWait());
 			}
 
 			if (rootLogger.GetTraceLevel() != 0)
@@ -996,8 +996,8 @@ LRESULT CMainFrame::OnPGNProfStatus(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam,
 
 	// remember all loggers states, then mark all processes as terminated
 	map<CLoggerItemBase*, LOGGER_STATE> statesMap;
-	list<CLoggerItemBase*>& processes = const_cast<list<CLoggerItemBase*>&>(rootLogger.GetChildren());
-	for (list<CLoggerItemBase*>::const_iterator it=processes.begin(); it != processes.end(); it++)
+	auto& processes = rootLogger.GetChildren();
+	for (auto it=processes.cbegin(); it != processes.cend(); it++)
 	{
 		statesMap.insert(std::pair<CLoggerItemBase*, LOGGER_STATE>(*it, (*it)->GetState()));
 		(*it)->SetState(LS_TERMINATED);
@@ -1007,7 +1007,7 @@ LRESULT CMainFrame::OnPGNProfStatus(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam,
 	{
 #pragma region LOCAL_HOST
 		DWORD appList[5000];
-		int entries = 5000;
+		int entries = _countof(appList);
 		GetAppList(appList, &entries);
 
 		for (int i = 0; i < entries; i++)
@@ -1084,17 +1084,23 @@ LRESULT CMainFrame::OnPGNProfStatus(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam,
 	hostLogger.Lock();
 
 	// clean-up terminated processes
-	for (list<CLoggerItemBase*>::iterator it=processes.begin(); it != processes.end(); )
+	for (auto it=processes.begin(); it != processes.end(); )
 	{
-		if (!(*it)->IsFilterActive() && (*it)->GetState() == LS_TERMINATED && (*it)->GetNumMessages() == 0)
+		auto procItem = *it;
+		if (!procItem->IsFilterActive() && procItem->GetState() == LS_TERMINATED && procItem->GetNumMessages() == 0)
 		{
+			ATLTRACE2(atlTraceDBProvider, 0, L"CMainFrame::OnPGNProfStatus(): removed process logger pid=%d\n", procItem->GetPID());
+
 			if (m_explorer.GetCurrentLoggerPtr() == *it)
 			{
 				m_explorer.SetCurrentLoggerPtr(0);
 				UpdateFileSaveBtn();
 			}
-			delete (*it);
+
+			CLoggerTracker::Instance().RemoveLogger(procItem);
+
 			it = processes.erase(it);
+			//DO NOT delete procItem; because it is owned by the ExplorerView
 		}
 		else
 			it++;
@@ -1135,18 +1141,18 @@ LRESULT CMainFrame::OnPGNProfStatus(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam,
 //        = 1 process terminates;
 LRESULT CMainFrame::OnPGNProfStartSingle(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	ATLTRACE2(atlTraceDBProvider, 0, L"Enter CMainFrame::OnPGNProfStartSingle(pid=%d)\n", wParam);
+	ATLTRACE2(atlTraceDBProvider, 0, L"Enter CMainFrame::OnPGNProfStartSingle(pid=%d %s)\n", wParam, lParam ? L"Terminated" : L"Launched");
 
 	CHostLoggerItem& hostLogger = m_explorer.GetRootLogger();
 	ATLASSERT(&hostLogger != NULL);
 	CLoggerItemBase* pCurLogger = m_explorer.GetCurrentLoggerPtr();
-	list<CLoggerItemBase*>& processes = const_cast<list<CLoggerItemBase*>&>(hostLogger.GetChildren());
+	auto& processes = hostLogger.GetChildren();
 
 	if (!lParam)
 	{
 		// remember all loggers states
 		map<CLoggerItemBase*, LOGGER_STATE> statesMap;
-		for (list<CLoggerItemBase*>::const_iterator it = processes.begin(); it != processes.end(); it++)
+		for (auto it = processes.cbegin(); it != processes.cend(); it++)
 		{
 			statesMap.insert(std::pair<CLoggerItemBase*, LOGGER_STATE>(*it, (*it)->GetState()));
 			if (1 == lParam && static_cast<CProcessLoggerItem*>(*it)->GetPID() == wParam)
@@ -1177,7 +1183,7 @@ LRESULT CMainFrame::OnPGNProfStartSingle(UINT /*uMsg*/, WPARAM wParam, LPARAM lP
 	}
 	else
 	{
-		for (list<CLoggerItemBase*>::const_iterator it = processes.begin(); it != processes.end(); it++)
+		for (auto it = processes.cbegin(); it != processes.cend(); it++)
 		{
 			if (static_cast<CProcessLoggerItem*>(*it)->GetPID() == wParam)
 			{
@@ -1489,13 +1495,13 @@ LRESULT CMainFrame::OnCapture(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl
 	case LT_LOGROOT:
 		{
 			bool profileAllApps = (pLogger->GetState() == LS_PAUSED);
-			const list<CLoggerItemBase*>& processes = pLogger->GetChildren();
-			for (list<CLoggerItemBase*>::const_iterator it=processes.begin(); it != processes.end(); it++)
+			auto processes = pLogger->GetChildren();
+			for (auto it=processes.cbegin(); it != processes.cend(); it++)
 			{
 				if ((profileAllApps && (*it)->GetState() == LS_PAUSED) ||
 					(!profileAllApps && (*it)->GetState() == LS_RUN))
 				{
-					CaptureToggle(*it);
+					CaptureToggle(*it, m_traceReader.GetUnlimitedWait());
 				}
 			}
 			pLogger->SetState(profileAllApps ? LS_RUN : LS_PAUSED);
@@ -1504,7 +1510,7 @@ LRESULT CMainFrame::OnCapture(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl
 
 	case LT_PROCESS:
 	case LT_PROCESS64:
-		CaptureToggle(pLogger);
+		CaptureToggle(pLogger, m_traceReader.GetUnlimitedWait());
 	}
 
 	UpdateCaptureButtonImg(pLogger);
@@ -1986,12 +1992,12 @@ LRESULT CMainFrame::OnProfileAllApps(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam
 	ATLTRACE2(atlTraceDBProvider, 0, L"CMainFrame::OnProfileAllApps()\n");
 
 	CHostLoggerItem& logger = m_explorer.GetRootLogger();
-	const list<CLoggerItemBase*>& processes = logger.GetChildren();
-	for (list<CLoggerItemBase*>::const_iterator it=processes.begin(); it != processes.end(); it++)
+	auto processes = logger.GetChildren();
+	for (auto it=processes.cbegin(); it != processes.cend(); it++)
 	{
 		if ((*it)->GetState() == LS_PAUSED)
 		{
-			CaptureToggle(*it);
+			CaptureToggle(*it, m_traceReader.GetUnlimitedWait());
 		}
 	}
 
@@ -2031,6 +2037,7 @@ LRESULT CMainFrame::OnHostConnected(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam,
 	unique_ptr<CHostLoggerItem> pHostLogger(new CHostLoggerItem(workPath.release()));
 	pHostLogger->SetName(params->_host);
 	pHostLogger->SetCredentials(params->_user, params->_pwd);
+	pHostLogger->SetMainWindow(m_hWnd);
 
 	ATL::CString processes;
 	int exitCode = pHostLogger->ListProcessesOnRemoteHost(processes);
@@ -2060,13 +2067,14 @@ LRESULT CMainFrame::OnHostConnected(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam,
 
 			CProcessLoggerItem* pProcess = new CProcessLoggerItem((wstring(pProcessName) + L" (" + pPID + L")").c_str(), pHostLogger.get(), LS_PAUSED, pX64 != NULL);
 			pProcess->SetPID(_wtoi(pPID));
+			pProcess->SetMainWindow(m_hWnd);
 			if (pProcess->OpenLogFile(m_optionsForWork.m_dwDeleteWorkFiles) == 0)
 			{
 				pHostLogger->AddChild(pProcess);
 
 				//if (rootState == LS_RUN)
 				//{
-				//	CaptureToggle(pProcess);
+				//	CaptureToggle(pProcess, m_traceReader.GetUnlimitedWait());
 				//}
 			}
 		}
@@ -2149,7 +2157,7 @@ static void GetLogFilePath(/*[out]*/WCHAR* path)
 
 void CMainFrame::pipeCreatedCallback(int pid)
 {
-	PostMessageW(MYMSG_START_SINGLE, (WPARAM)pid, 0);
+	SendMessage(MYMSG_START_SINGLE, (WPARAM)pid, 0);
 }
 
 void CMainFrame::pipeClosedCallback(int pid)

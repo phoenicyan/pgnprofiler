@@ -209,7 +209,7 @@ void CExplorerView::RemoveClearedLogFiles()
 
 bool CExplorerView::IsLogFileOpen(LPCTSTR lpFileName)
 {
-	return FindLogger(m_logFiles, lpFileName) != nullptr;
+	return FindLogger<CLoggerItemBase>(m_logFiles, lpFileName) != nullptr;
 }
 
 int CExplorerView::AddHost(CHostLoggerItem* pHost)
@@ -225,7 +225,7 @@ int CExplorerView::AddHost(CHostLoggerItem* pHost)
 
 bool CExplorerView::IsHostConnected(LPCTSTR lpHostName)
 {
-	return FindLogger(m_remoteHosts, lpHostName) != nullptr;
+	return FindLogger<CLoggerItemBase>(m_remoteHosts, lpHostName) != nullptr;
 }
 
 CHostLoggerItem* CExplorerView::FindHost(HANDLE hPipe)
@@ -250,14 +250,15 @@ void CExplorerView::CancelFilters()
 	m_rootLogger.SetFilterActive(false);
 }
 
-CLoggerItemBase* CExplorerView::FindLogger(const list<CLoggerItemBase*>& loggers, const WCHAR* strText)
+template<class T>
+T* CExplorerView::FindLogger(const list<T*>& loggers, const WCHAR* strText)
 {
-	CLoggerItemBase* pLogger = NULL;
-	for (list<CLoggerItemBase*>::const_iterator it=loggers.begin(); it != loggers.end(); it++)
+	T* pLogger = NULL;
+	for (auto it=loggers.cbegin(); it != loggers.cend(); it++)
 	{
 		if (0 == wcscmp((*it)->GetName(), strText))
 		{
-			pLogger = (CLoggerItemBase*)*it;
+			pLogger = *it;
 			break;
 		}
 	}
@@ -286,7 +287,7 @@ bool CExplorerView::_CleanupItem(HTREEITEM hItem, bool& bLoggerSelected)
 
 	bool bExpanded = GetItemState(hItem, TVIS_EXPANDED) != 0;
 
-	const list<CLoggerItemBase*>& loggers = pLogger->GetChildren();
+	const auto& loggers = pLogger->GetChildren();
 	const int nLen = 256;
 	WCHAR strText[nLen];
 	list<wstring> procNames;
@@ -299,7 +300,7 @@ bool CExplorerView::_CleanupItem(HTREEITEM hItem, bool& bLoggerSelected)
 		{
 			procNames.push_back(strText);
 
-			if (!FindLogger(loggers, strText))
+			if (!FindLogger<CProcessLoggerItem>(loggers, strText))
 				DeleteItem(hChildItem);
 		}
 		hChildItem = hTmp;
@@ -312,7 +313,7 @@ bool CExplorerView::_CleanupItem(HTREEITEM hItem, bool& bLoggerSelected)
 	}
 
 	// Add host items back.
-	for (list<CLoggerItemBase*>::const_iterator it = loggers.begin(); it != loggers.end(); it++)
+	for (auto it = loggers.cbegin(); it != loggers.cend(); it++)
 	{
 		if (find(procNames.begin(), procNames.end(), (*it)->GetName()) == procNames.end())
 			_PopulateTree(*it, hItem);
@@ -437,8 +438,8 @@ HTREEITEM CExplorerView::_PopulateTree(const CLoggerItemBase* pBlock, HTREEITEM 
 				hParent, 
 				TVI_LAST);
 	
-	const list<CLoggerItemBase*>& loggers = pBlock->GetChildren();
-	for (list<CLoggerItemBase*>::const_iterator it=loggers.begin(); it != loggers.end(); it++)
+	const auto& loggers = const_cast<CLoggerItemBase*>(pBlock)->GetChildren();
+	for (auto it=loggers.cbegin(); it != loggers.cend(); it++)
 	{
 		_PopulateTree(*it, hItem);
 	}

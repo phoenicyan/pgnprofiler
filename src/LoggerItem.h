@@ -36,6 +36,7 @@ enum LOGGER_STATE
 	LS_TERMINATED,	// when there are log entries but process terminated
 };
 
+class CProcessLoggerItem;
 
 /////////////////////////////////////////////////////////////////////////////
 // CLoggerItemBase - Abstract base class for Explorer nodes.
@@ -51,7 +52,8 @@ protected:
 	LOGGER_STATE		m_state;
 	DWORD				m_dwTraceLevel;
 
-	list<CLoggerItemBase*> m_children;
+	list<CProcessLoggerItem*> m_children;
+	HWND				m_mainWindow;
 	CLoggerItemBase*	m_pParent;
 	FILETIME			m_initialTime;
 	wstring				m_filterStr;
@@ -91,10 +93,20 @@ public:
 	int GetCompletionCode() const { return m_completionCode; }
 
 	const CLoggerItemBase* GetParent() const { return m_pParent; }
-	const list<CLoggerItemBase*>& GetChildren() const { return m_children; }
+	list<CProcessLoggerItem*>& GetChildren() { return m_children; }
 
 	BOOL DeleteChildren();
-	BOOL AddChild(CLoggerItemBase* pBlock);
+	BOOL AddChild(CProcessLoggerItem* pBlock);
+
+	inline HWND GetMainWindow() const
+	{
+		return m_mainWindow;
+	}
+
+	inline void SetMainWindow(HWND mainWindow)
+	{
+		m_mainWindow = mainWindow;
+	}
 
 	// Implementation
 

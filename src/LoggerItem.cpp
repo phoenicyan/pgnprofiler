@@ -60,18 +60,22 @@ map<DWORD, wstring>* CLoggerItemBase::GetLogger2AppnameMap()
 
 BOOL CLoggerItemBase::DeleteChildren()
 {
-	for (list<CLoggerItemBase*>::iterator it=m_children.begin(); it != m_children.end(); it++)
+	ATLTRACE2(atlTraceDBProvider, 0, L"CLoggerItemBase::DeleteChildren(): %ld\n", m_children.size());
+
+	for (auto it=m_children.begin(); it != m_children.end(); )
 	{
 		CLoggerTracker::Instance().RemoveLogger(*it);
-
 		delete (*it);
+		it = m_children.erase(it);
 	}
 	return TRUE;
 }
 
-BOOL CLoggerItemBase::AddChild(CLoggerItemBase* pBlock)
+BOOL CLoggerItemBase::AddChild(CProcessLoggerItem* pBlock)
 {
-	CLoggerTracker::Instance().AddLogger(pBlock);
+	ATLTRACE2(atlTraceDBProvider, 0, L"CLoggerItemBase::AddChild(pid=%d)\n", pBlock->GetPID());
+
+	CLoggerTracker::Instance().AddLogger((USHORT)pBlock->GetPID(), pBlock);	// assume that PID_n <> PID_m + 65536
 
 	m_children.push_back(pBlock);
 
@@ -389,7 +393,7 @@ size_t CHostLoggerItem::GetNumErrors() const
 {
 	size_t errorCnt = 0;
 
-	for (list<CLoggerItemBase*>::const_iterator it=m_children.begin(); it != m_children.end(); it++)
+	for (auto it=m_children.cbegin(); it != m_children.cend(); it++)
 	{
 		errorCnt += (*it)->GetNumErrors();
 	}
@@ -407,9 +411,9 @@ const BYTE* CHostLoggerItem::GetMessageData(size_t i) const
 	CPackedMessage pMessage = !m_filterActive ? m_rgPackedMessages[i] : m_rgFilteredMessages[i];
 
 	CProcessLoggerItem* pLogger = (CProcessLoggerItem*) CLoggerTracker::Instance().GetLogger(pMessage._v._itemId);
-	ATLASSERT(pLogger != nullptr);
-
-	return pLogger->m_logStart + pMessage._v._offset;
+	if (pLogger != nullptr)
+		return pLogger->m_logStart + pMessage._v._offset;
+	return nullptr;
 }
 
 void CHostLoggerItem::FilterLoggerItems()
@@ -502,7 +506,7 @@ void CHostLoggerItem::ClearLog()
 {
 	m_rgPackedMessages.clear();
 
-	for (list<CLoggerItemBase*>::iterator it=m_children.begin(); it != m_children.end(); it++)
+	for (auto it=m_children.begin(); it != m_children.end(); it++)
 	{
 		(*it)->ClearLog();
 	}
@@ -512,7 +516,7 @@ void CHostLoggerItem::SetTraceLevel(DWORD dwTraceLevel)
 {
 	m_dwTraceLevel = dwTraceLevel;
 
-	for (list<CLoggerItemBase*>::iterator it = m_children.begin(); it != m_children.end(); it++)
+	for (auto it = m_children.begin(); it != m_children.end(); it++)
 	{
 		(*it)->SetTraceLevel(dwTraceLevel);
 	}
@@ -716,7 +720,8 @@ bool CProcessLoggerItem::AddMessageFromWritePos()
 	}
 
 	// Overwrite PayloadLength with _itemId of the this logger.
-	*(DWORD*)m_logWritePos = (USHORT)this;
+	const auto itemId = (USHORT)this->GetPID();
+	*(DWORD*)m_logWritePos = itemId;
 
 	DWORD offset = (DWORD)(m_logWritePos-m_logStart);
 	m_rgMessageOffsets.push_back(offset);
@@ -732,7 +737,7 @@ bool CProcessLoggerItem::AddMessageFromWritePos()
 		}
 	}
 
-	((CHostLoggerItem*)m_pParent)->AddPackedMessage(CPackedMessage::Make(this, offset));
+	((CHostLoggerItem*)m_pParent)->AddPackedMessage(CPackedMessage::Make(itemId, offset));
 
 	return true;
 }
@@ -829,11 +834,13 @@ void CProcessLoggerItem::ClearLog()
 
 	m_errorCnt = 0;
 
+	const auto itemId = (USHORT)this->GetPID();
+
 	vector<CPackedMessage>& parentMsgs = ((CHostLoggerItem*)m_pParent)->GetPackedMessages();
 	for (auto it=parentMsgs.begin(); it != parentMsgs.end(); )
 	{
 		// clear the message and fetch next target
-		if (it->_v._itemId == (USHORT)this)
+		if (it->_v._itemId == itemId)
 			it = parentMsgs.erase(it);
 		else
 			it++;
@@ -896,7 +903,6 @@ const WCHAR* CProcessLoggerItem::GetPipeName()
 
 void CProcessLoggerItem::ClosePipe()
 {
-	DisconnectNamedPipe(m_hFile);
 	CloseHandle(m_hFile);
 
 	m_hFile = INVALID_HANDLE_VALUE;

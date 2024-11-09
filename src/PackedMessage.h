@@ -16,13 +16,18 @@ public:
 	struct
 	{
 		LONGLONG _offset : 48;
-		LONGLONG _itemId : 16;
+		ULONGLONG _itemId : 16;
 	}
 	// __attribute__((packed))
 	_v;
 #pragma pack(pop)
 
-	static CPackedMessage Make(CLoggerItemBase* pLoggerItem, LONGLONG offset);
+	static inline CPackedMessage Make(USHORT itemId, LONGLONG offset) noexcept
+	{
+		BUILD_BUG_ON(sizeof(CPackedMessage) != 8);
+
+		return { offset, itemId };
+	}
 
 private:
 	CPackedMessage() = default;
@@ -36,12 +41,12 @@ class CLoggerTracker
 public:
 	static CLoggerTracker& Instance();
 
-	void AddLogger(CLoggerItemBase* pLoggerItem);
+	void AddLogger(USHORT itemId, CLoggerItemBase* pLoggerItem);
 	
 	void RemoveLogger(CLoggerItemBase* pLoggerItem);
 	
 	CLoggerItemBase* GetLogger(USHORT itemId);
 
 private:
-	CLoggerTracker() = default;
+	CLoggerTracker() noexcept = default;
 };

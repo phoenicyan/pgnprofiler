@@ -282,3 +282,22 @@ public:
 
 	const BYTE* GetBaseAddr() const { return _baseAddr; }
 };
+
+#pragma pack(push,4)
+class StartupComm
+{
+	int _id;
+	int _payload;
+	TCHAR _buffer[4096];
+
+public:
+	StartupComm(int id, int payload) : _id(id), _payload(payload)
+	{}
+
+	LPCTSTR asBase64();
+	void fromBase64(LPCTSTR);
+
+	inline int GetID() const { return _id; }
+	inline int GetPayload() const { return _payload; }
+};
+#pragma pack(pop)

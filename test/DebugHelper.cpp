@@ -20,7 +20,6 @@ using namespace std;
 
 #include <atlcomtime.h>		// COleDateTime
 
-
 #define OUT_BUFSIZE (24*1024*1024)
 #define IN_BUFSIZE (10*1024)
 #define PIPE_TIMEOUT 5000
@@ -105,7 +104,7 @@ public:
 		if (IsCommActive())
 			StopComm();
 
-		CloseHandle(m_hPipe);
+		DisconnectNamedPipe(m_hPipe);
 		m_hPipe = INVALID_HANDLE_VALUE;
 
 		DeleteCriticalSection(&m_pipeCS);
@@ -121,10 +120,9 @@ public:
 		m_evtStopPipeMonitor = CreateEvent(NULL, TRUE, FALSE, NULL);
 		m_evtPipeMonitorFinished = CreateEvent(NULL, TRUE, FALSE, NULL);
 		m_op.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-
-		DWORD threadId;
-		m_hCommThread = CreateThread(0, 0, PipeMonitorThread, this, CREATE_SUSPENDED, &threadId);
+		m_hCommThread = CreateThread(0, 0, PipeMonitorThread, this, CREATE_SUSPENDED, NULL);
 		ResumeThread(m_hCommThread);
+		Sleep(0);
 	}
 
 	void StopComm()
@@ -646,6 +644,8 @@ void CDHPipes::OnClientDisconnected(DH_PIPE* pipe)
 
 static void LogStartup(CLogContext* logContext, const char* sComment, ...);
 
+#define BUFSIZE		4096
+
 ///////////////////////////////////////////////////////////////////////////////
 // Creates named pipe to send profiling information.
 // Returns: 0 if success, otherwise error code from GetLastError().
@@ -666,12 +666,40 @@ DWORD ProfilerClientInit()
 	DH_PIPE* pipe = m_dhPipes.AddPipeInstance();
 	pipe->StartComm();
 
+	Sleep(0);
+
 	// notify PGNProfiler (if any) that new instance of provider is started
 	COneInstance guard(_T("Global\\")_T(PROFILERSGN));
 	DWORD waitrez = ::WaitForSingleObject(guard.m_hInstanceGuard, 0);
 	if (NULL == guard.m_hInstanceGuard || WAIT_TIMEOUT == waitrez)
 	{
-		LogStartup(NULL, "Process with PID=%d started", GetCurrentProcessId());
+		StartupComm sc(1, GetCurrentProcessId());
+		LPTSTR lpszWrite = (LPTSTR)sc.asBase64();
+		TCHAR chReadBuf[BUFSIZE];
+		BOOL fSuccess;
+		DWORD cbRead;
+		LPTSTR lpszPipename = (LPTSTR)TEXT("\\\\.\\pipe\\pgnprof_comm");
+		
+		fSuccess = CallNamedPipe(
+			lpszPipename,				// pipe name 
+			lpszWrite,					// message to server 
+			(lstrlen(lpszWrite) + 1) * sizeof(TCHAR), // message length 
+			chReadBuf,					// buffer to receive reply 
+			BUFSIZE * sizeof(TCHAR),	// size of read buffer 
+			&cbRead,					// number of bytes read 
+			2000);						// waits for 2 seconds
+		if (fSuccess || GetLastError() == ERROR_MORE_DATA)
+		{
+			//_tprintf(TEXT("%s\n"), chReadBuf);
+
+			// The pipe is closed; no more data can be read
+			//if (!fSuccess)
+			//{
+			//	printf("\nExtra data in message was lost\n");
+			//}
+
+			LogStartup(NULL, "Process with PID=%d started", GetCurrentProcessId());
+		}
 	}
 	else
 	{

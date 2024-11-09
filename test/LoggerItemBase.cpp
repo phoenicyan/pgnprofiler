@@ -20,7 +20,7 @@ CLoggerItemBase::CLoggerItemBase() : CLoggerItemBase(L"", nullptr)
 
 CLoggerItemBase::CLoggerItemBase(LPCTSTR pstrName, CLoggerItemBase* pParent)
 	: m_name(pstrName), m_pParent(pParent), m_initialTime(), m_filterActive(false)
-	, m_bROmode(false), m_psWorkPath(0), m_dwTraceLevel(0)
+	, m_bROmode(false), m_psWorkPath(0), m_dwTraceLevel(0)//, m_mainWindow(0)
 {}
 
 CLoggerItemBase::~CLoggerItemBase()

@@ -12,34 +12,50 @@
 #include "Remote/RemoteApi.h"
 #include <time.h>
 
-CTraceReader::CTraceReader(void) : m_threadId(-1), m_mainWindow(0), m_hWnd(0)
+#define TRACE_READER_TIMER		1
+
+CTraceReader::CTraceReader(void) : m_threadId(ULONG_MAX)
 {
+	ATLTRACE2(atlTraceDBProvider, 0, L"CTraceReader ctor: create UnlimitedWait object\n");
+
+	m_pUnlimitedWait = CreateUnlimitedWait(NULL, 8, OnTimeoutCallback, OnApcCallback);
+	m_hQuit = CreateEvent(NULL, TRUE, FALSE, NULL);
 	InitializeCriticalSection(&m_loggersCS);
 }
 
 CTraceReader::~CTraceReader(void)
 {
 	StopAll();
-
 	DeleteCriticalSection(&m_loggersCS);
+	DeleteUnlimitedWait(m_pUnlimitedWait);
 }
 
-void CTraceReader::SetMainWindow(HWND mainWindow)
+VOID WINAPI CTraceReader::OnTimeoutCallback(PVOID lpContext)
 {
-	m_mainWindow = mainWindow;
+	//ATLTRACE2(atlTraceDBProvider, 0, L"CTraceReader::OnTimeoutCallback(%p)\n", lpContext);
+}
 
-	HANDLE hThread = CreateThread(0, 0, CTraceReader::ThreadProc, this, CREATE_SUSPENDED, &m_threadId);
-	SetThreadPriority(hThread, THREAD_PRIORITY_ABOVE_NORMAL);
-	ResumeThread(hThread);
+VOID WINAPI CTraceReader::OnApcCallback(PVOID lpContext)
+{
+	//ATLTRACE2(atlTraceDBProvider, 0, L"CTraceReader::OnApcCallback(%p)\n", lpContext);
 }
 
 DWORD CTraceReader::Start(CHostLoggerItem* pLogger)
 {
 	ATLASSERT(pLogger != 0);
+	ATLTRACE2(atlTraceDBProvider, 0, L"CTraceReader::Start: %s\n", pLogger->GetName());
 
 	EnterCriticalSection(&m_loggersCS);
 
 	m_loggers.push_back(pLogger);
+
+	if (ULONG_MAX == m_threadId)
+	{
+		HANDLE hThread = CreateThread(0, 0, CTraceReader::ThreadProc, this, CREATE_SUSPENDED, &m_threadId);
+		SetThreadPriority(hThread, THREAD_PRIORITY_ABOVE_NORMAL);
+		ResumeThread(hThread);
+		Sleep(0);
+	}
 
 	LeaveCriticalSection(&m_loggersCS);
 
@@ -48,74 +64,50 @@ DWORD CTraceReader::Start(CHostLoggerItem* pLogger)
 
 void CTraceReader::StopAll()
 {
-	PostThreadMessage(m_threadId, WM_QUIT, 0, 0);
+	ATLTRACE2(atlTraceDBProvider, 0, L"CTraceReader::StopAll\n");
+	SetEvent(m_hQuit);
 }
 
-HWND CTraceReader::CreateVirtualWindow()
-{
-	WNDCLASSEX wndcls; 
-	HINSTANCE hInst = _AtlBaseModule.GetModuleInstance();
-
-	if (!::GetClassInfoEx(hInst, PGNPROF_VREADER_CLASS, &wndcls))
-    {
-		wndcls.cbSize = sizeof(wndcls);					// size of structure 
-		wndcls.style = 0;								// redraw if size changes 
-		wndcls.lpfnWndProc = (WNDPROC)WndProc;			// points to window procedure 
-		wndcls.cbClsExtra = 0;							// no extra class memory 
-		wndcls.cbWndExtra = 0;							// no extra window memory 
-		wndcls.hInstance = hInst;						// handle to instance 
-		wndcls.hIcon = NULL;							// predefined app. icon 
-		wndcls.hCursor = NULL;							// predefined arrow 
-		wndcls.hbrBackground = NULL;					// white background brush 
-		wndcls.lpszMenuName = NULL;						// name of menu resource 
-		wndcls.lpszClassName = PGNPROF_VREADER_CLASS;		// name of window class 
-		wndcls.hIconSm = NULL; 
-	 
-		if (!::RegisterClassEx(&wndcls))
-			return NULL;
-	}
-
-	m_hWnd = ::CreateWindow(PGNPROF_VREADER_CLASS, L"", WS_POPUPWINDOW, 0, 0, 0, 0, NULL, NULL, hInst, NULL);
-	if (m_hWnd != NULL)
-	{
-		MSG msg;
-		::PeekMessage(&msg, m_hWnd, 0, 0, PM_NOREMOVE);
-	}
-	return m_hWnd;
-}
-
-void CTraceReader::DestroyVirtualWindow(HWND hWnd)
-{
-	::DestroyWindow(hWnd);
-	::UnregisterClass(PGNPROF_VREADER_CLASS, _AtlBaseModule.GetModuleInstance());
-}
-
-#define TRACE_READER_TIMER		1
+#define DEFAULT_WAIT    (25)
 
 DWORD WINAPI CTraceReader::ThreadProc(LPVOID pParam)
 {
+	ATLTRACE2(atlTraceDBProvider, 0, L"Enter CTraceReader::ThreadProc\n");
+
 	CTraceReader* pThis = (CTraceReader*)pParam;
 
-	HWND hWnd = pThis->CreateVirtualWindow();
-
-	SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pParam);
-
-	SetTimer(hWnd, TRACE_READER_TIMER, 133, 0);
-
-	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
+	while (WaitForSingleObject(pThis->m_hQuit, 0) == WAIT_TIMEOUT)
 	{
-		::TranslateMessage(&msg);
-		::DispatchMessage(&msg);
+		const auto WAIT_N = 1;
+
+		ULONG nresults = 0;
+		void* results[WAIT_N] = { 0 };
+		char tmp_buffer[32 * WAIT_N] = { 0 };
+
+		if (WaitUnlimitedWaitEx(pThis->m_pUnlimitedWait, results, tmp_buffer, WAIT_N, &nresults, DEFAULT_WAIT, TRUE))
+		{
+			ATLTRACE2(atlTraceDBProvider, 0, L"%u objects signalled.\n", nresults);
+			continue;
+		}
+
+		switch(GetLastError())
+		{
+		    case WAIT_TIMEOUT: break;
+		    case WAIT_IO_COMPLETION: break;
+		    default: ATLTRACE2(atlTraceDBProvider, 0, L"** Wait error %d\n", GetLastError());
+		}
+
+		Sleep(DEFAULT_WAIT);
 	}
 
-	pThis->DestroyVirtualWindow(hWnd);
+	ATLTRACE2(atlTraceDBProvider, 0, L"Leave CTraceReader::ThreadProc\n");
 
-	return (DWORD)msg.wParam;
+	return 0;
 }
 
-void CTraceReader::HandleProcessLoggerOverlappedResult(CProcessLoggerItem& processLogger)
+BOOL WINAPI CTraceReader::HandleProcessLoggerOverlappedResult(/*CProcessLoggerItem&*/PVOID lpObjectContext, HANDLE hObject)
 {
+	CProcessLoggerItem& processLogger = *(CProcessLoggerItem*)lpObjectContext;
 	DWORD numBytesLeft = 0;
 	HANDLE hPipe = processLogger.GetPipe();
 	BOOL rez = GetOverlappedResult(hPipe, &processLogger.m_op, &numBytesLeft, FALSE);
@@ -125,9 +117,8 @@ void CTraceReader::HandleProcessLoggerOverlappedResult(CProcessLoggerItem& proce
 		processLogger.SetState(LS_TERMINATED);
 		processLogger.SetPipe(INVALID_HANDLE_VALUE);
 
-		DisconnectNamedPipe(hPipe);
 		CloseHandle(hPipe);
-		return;
+		return FALSE;
 	}
 
 	ATLTRACE2(atlTraceDBProvider, 0, L"HandleProcessLoggerOverlappedResult: %d bytes received from '%s'\n", numBytesLeft, processLogger.GetName());
@@ -262,17 +253,20 @@ void CTraceReader::HandleProcessLoggerOverlappedResult(CProcessLoggerItem& proce
 	rez = ReadFile(processLogger.GetPipe(), processLogger.m_tszBuffer, PIPEBUFFERSIZE, NULL, &processLogger.m_op);
 	if (rez != 0 || GetLastError() == ERROR_IO_PENDING)
 	{
-		::PostMessage(m_mainWindow, MYMSG_DATA_READ, (WPARAM)processLogger.GetPipe(), (LPARAM)0);
+		::PostMessage(processLogger.GetMainWindow(), MYMSG_DATA_READ, (WPARAM)processLogger.GetPipe(), (LPARAM)0);
 	}
 	else
 	{
 		processLogger.ClosePipe();
-		::PostMessage(m_mainWindow, WM_PGNPROF_STATUS, 0, 0);
+		::PostMessage(processLogger.GetMainWindow(), WM_PGNPROF_STATUS, 0, 0);
 	}
+
+	return TRUE;
 }
 
-void CTraceReader::HandleHostLoggerOverlappedResult(CHostLoggerItem& hostLogger)
+BOOL WINAPI CTraceReader::HandleHostLoggerOverlappedResult(/*CHostLoggerItem&*/PVOID lpObjectContext, HANDLE hObject)
 {
+	CHostLoggerItem& hostLogger = *(CHostLoggerItem*)lpObjectContext;
 	DWORD numBytesLeft = 0;
 	OVERLAPPED& op = hostLogger.GetOverlapped();
 
@@ -284,7 +278,7 @@ void CTraceReader::HandleHostLoggerOverlappedResult(CHostLoggerItem& hostLogger)
 		// TODO: 
 		// This probably means that remote computer disconnected, or shutdown unexpectedly.
 		// Mark this host logger and all child loggers as terminated, and perform cleanup (close pipes, etc.)
-		return;
+		return FALSE;
 	}
 
 	ATLTRACE2(atlTraceDBProvider, 0, L"HandleHostLoggerOverlappedResult: %d bytes received from '%s'\n", numBytesLeft, hostLogger.GetName());
@@ -303,101 +297,7 @@ void CTraceReader::HandleHostLoggerOverlappedResult(CHostLoggerItem& hostLogger)
 		hostLogger.CloseRemotePipe();
 	}
 
-	::PostMessage(m_mainWindow, WM_PGNPROF_STATUS, (WPARAM)hostLogger.GetRemotePipe(), (LPARAM)msgReturned.release());
-}
+	::PostMessage(hostLogger.GetMainWindow(), WM_PGNPROF_STATUS, (WPARAM)hostLogger.GetRemotePipe(), (LPARAM)msgReturned.release());
 
-void CTraceReader::OnTimer(HWND hWnd, int timerID)
-{
-	vector<HANDLE> hostEvents;		// these are op-events used to refresh lists of processes on remote hosts
-	vector<CHostLoggerItem*> waitableHostLoggers;
-
-	EnterCriticalSection(&m_loggersCS);
-
-	for (auto it = m_loggers.begin(); it != m_loggers.end(); it++)
-	{
-		CHostLoggerItem* pHostLogger = *it;
-
-		//pHostLogger->Lock();
-
-		OVERLAPPED& op = pHostLogger->GetOverlapped();
-		if (/*pRemote &&*/ op.hEvent != 0)
-		{
-			hostEvents.push_back(op.hEvent);
-			waitableHostLoggers.push_back(pHostLogger);
-		}
-
-		// fill in array of overlapped handles
-		const list<CLoggerItemBase*>& processLoggers = pHostLogger->GetChildren();
-
-		HANDLE handles[MAXIMUM_WAIT_OBJECTS];
-		CProcessLoggerItem* waitableProcessLoggers[MAXIMUM_WAIT_OBJECTS];
-		int numHandles = 0;
-		for (list<CLoggerItemBase*>::const_iterator it = processLoggers.begin(); it != processLoggers.end(); it++)
-		{
-			try
-			{
-				CProcessLoggerItem& processLogger = *(CProcessLoggerItem*)(*it);
-				if (processLogger.GetState() == LS_RUN && processLogger.GetPipe() != INVALID_HANDLE_VALUE)
-				{
-					handles[numHandles] = processLogger.m_op.hEvent;
-					waitableProcessLoggers[numHandles] = &processLogger;
-					numHandles++;
-				}
-			}
-			catch (...)
-			{
-				ATLTRACE2(atlTraceDBProvider, 0, L"** Exception in CTraceReader::OnTimer numHandles=%d\n", numHandles);
-			}
-		}
-
-		if (numHandles > 0)
-		{
-			// check if data is available
-			DWORD waitRez = WaitForMultipleObjects(numHandles, handles, FALSE, 0);
-			switch (waitRez)
-			{
-			case WAIT_FAILED:
-			case WAIT_TIMEOUT:
-				//ATLTRACE2(atlTraceDBProvider, 0, L"CTraceReader::OnTimer(%d, %d, x%x, wr = %d) ?????\n", (int)time(0), numHandles, handles[0], waitRez);
-				break;
-
-			default:
-				//ATLTRACE2(atlTraceDBProvider, 0, L"CTraceReader::OnTimer(%d, %d, x%x, wr = %d)!!\n", (int)time(0), numHandles, handles[0], waitRez);
-				HandleProcessLoggerOverlappedResult(*waitableProcessLoggers[waitRez]);
-				break;
-			}
-		}
-
-		//pHostLogger->Unlock();
-	}
-
-	if (hostEvents.size() > 0)
-	{
-		// check if data is available
-		DWORD waitRez = WaitForMultipleObjects(hostEvents.size(), &hostEvents[0], FALSE, 0);
-		switch (waitRez)
-		{
-		case WAIT_FAILED:
-		case WAIT_TIMEOUT:
-			//ATLTRACE2(atlTraceDBProvider, 0, L"CTraceReader::OnTimer(%d, %d, x%x, wr = %d) ?????\n", (int)time(0), numHandles, handles[0], waitRez);
-			break;
-
-		default:
-			//ATLTRACE2(atlTraceDBProvider, 0, L"CTraceReader::OnTimer(%d, %d, x%x, wr = %d)!!\n", (int)time(0), numHandles, handles[0], waitRez);
-			HandleHostLoggerOverlappedResult(*waitableHostLoggers[waitRez]);
-			break;
-		}
-	}
-
-	LeaveCriticalSection(&m_loggersCS);
-}
-
-LRESULT CALLBACK CTraceReader::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	if (WM_TIMER == msg)
-	{
-		CTraceReader* pThis = (CTraceReader*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
-		pThis->OnTimer(hWnd, (int)wParam);
-	}
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	return TRUE;
 }

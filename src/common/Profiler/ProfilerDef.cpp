@@ -37,6 +37,7 @@ const WCHAR* TRC_TYPE_STR[] = {
 
 	// comment
 	L"COMMENT",
+	L"STARTUP",
 	0
 };
 
@@ -347,4 +348,50 @@ DWORD CProfERRORmsg::FlushPayload()
 DWORD CProfERRORmsg::GetLength()
 {
 	return ((const BYTE*)_clientSQL.TextPtr + _clientSQL.Length - _baseAddr);
+}
+
+#define BASE64CHARS	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+LPCTSTR StartupComm::asBase64()
+{
+	memset((void*) & _buffer[0], 0, sizeof(_buffer));
+	auto out = &_buffer[0];
+
+	unsigned val = 0; int valb = -6;
+	auto src = (unsigned char*) &_id;
+	for (int si = 0; si < sizeof(_id) + sizeof(_payload); si++)
+	{
+		val = (val << 8) + src[si];
+		valb += 8;
+		while (valb >= 0) {
+			*out++ = BASE64CHARS[(val >> valb) & 0x3F];
+			valb -= 6;
+		}
+	}
+
+	if (valb > -6) *out++ = BASE64CHARS[((val << 8) >> (valb + 8)) & 0x3F];
+	
+	while (_tcslen(_buffer) % 4) *out++ = '=';
+
+	return _buffer;
+}
+
+void StartupComm::fromBase64(LPCTSTR src)
+{
+	std::vector<int> T(256, -1);
+	for (int i = 0; i < 64; i++) T[BASE64CHARS[i]] = i;
+
+	auto out = (unsigned char*)&_id;
+	unsigned val = 0; int valb = -8;
+	while (*src)
+	{
+		auto c = 0xff & *src++;
+		if (T[c] == -1) break;
+		val = (val << 6) + T[c];
+		valb += 6;
+		if (valb >= 0) {
+			*out++ = char((val >> valb) & 0xFF);
+			valb -= 8;
+		}
+	}
 }

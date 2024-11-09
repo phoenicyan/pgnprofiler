@@ -15,7 +15,6 @@
 #include "MainFrm.h"
 #include "ProfilerDef.h"
 #include "ProfilerServer.h"
-#include "TraceReader.h"
 
 //#ifndef MSGFLT_ADD		// if Vista SDK is not installed or WINVER < 0x0600
 #define MSGFLT_ADD			1
@@ -40,7 +39,7 @@ DWORD ProfilerTimerInit()
 }
 
 /// Start or Stop capture
-void CaptureToggle(CLoggerItemBase* pBlock)
+void CaptureToggle(CLoggerItemBase* pBlock, UnlimitedWait* pUnlimitedWait)
 {
 	if (pBlock->GetType() != LT_PROCESS && pBlock->GetType() != LT_PROCESS64)
 		return;
@@ -53,6 +52,9 @@ void CaptureToggle(CLoggerItemBase* pBlock)
 		HANDLE hPipe = INVALID_HANDLE_VALUE;
 		const WCHAR* pipeName = processBlock.GetPipeName();
 		int attempts = 0;
+
+		ATLTRACE2(atlTraceDBProvider, 0, L"CaptureToggle(): pipe %s\n", pipeName);
+
 		for (;;)
 		{
 			hPipe = CreateFile(pipeName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
@@ -81,6 +83,10 @@ void CaptureToggle(CLoggerItemBase* pBlock)
 
 		processBlock.SetPipe(hPipe);
 		processBlock.SetState(LS_RUN);
+
+		ATLTRACE2(atlTraceDBProvider, 0, L"CaptureToggle(): adding wait object\n");
+
+		AddUnlimitedWaitObject(pUnlimitedWait, processBlock.m_op.hEvent, CTraceReader::HandleProcessLoggerOverlappedResult, &processBlock);
 	}
 	else if (processBlock.GetState() == LS_RUN)
 	{
@@ -89,7 +95,12 @@ void CaptureToggle(CLoggerItemBase* pBlock)
 		processBlock.SetState(LS_PAUSED);
 		processBlock.SetPipe(INVALID_HANDLE_VALUE);
 
-		DisconnectNamedPipe(hPipe);
+		ATLTRACE2(atlTraceDBProvider, 0, L"CaptureToggle(): removing wait object\n");
+
+		RemoveUnlimitedWaitObject(pUnlimitedWait, processBlock.m_op.hEvent, FALSE);
+
 		CloseHandle(hPipe);
 	}
+
+	ATLTRACE2(atlTraceDBProvider, 0, L"Leave CaptureToggle()\n");
 }
