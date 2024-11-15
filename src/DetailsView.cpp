@@ -205,6 +205,7 @@ void CDetailsView::ShowSQL(const list<DWORD_PTR>& dataList)
 			}
 
 		case TRC_COMMENT:
+		case TRC_STARTUP:
 			{
 				CProfSQLmsg profmsg(baseAddr, true);
 

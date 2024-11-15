@@ -417,7 +417,8 @@ DWORD CPGNProfilerView::OnItemPrePaint(int /*idCtrl*/, LPNMCUSTOMDRAW lpNMCustom
 
 	m_pCurLogger->Lock();
 	const BYTE* baseAddr = m_pCurLogger->GetMessageData((size_t)pLVCD->nmcd.dwItemSpec);
-	pLVCD->clrTextBk = GetLineColor((TRC_TYPE)baseAddr[4], (SQL_QUERY_TYPE)baseAddr[5]);
+	if (baseAddr != nullptr)
+		pLVCD->clrTextBk = GetLineColor((TRC_TYPE)baseAddr[4], (SQL_QUERY_TYPE)baseAddr[5]);
 	pLVCD->clrText = m_palit.CrText;
 	m_pCurLogger->Unlock();
 
@@ -439,7 +440,8 @@ BOOL CPGNProfilerView::ShowMessages(CLoggerItemBase* pLogger)
 	{
 		m_numMessages = MAXLONG;
 		m_pCurLogger = pLogger;
-		DeleteAllItems();
+		// do not use DeleteAllItems(); for performance reasons!
+		SetItemCountEx(0, 0);
 		msgCountChanged = TRUE;
 		m_prevTopIndex = 0;
 	}
@@ -488,7 +490,8 @@ void CPGNProfilerView::Refresh()
 
 	m_numMessages = MAXLONG;
 
-	DeleteAllItems();
+	// do not use DeleteAllItems(); for performance reasons!
+	SetItemCountEx(0, 0);
 }
 
 

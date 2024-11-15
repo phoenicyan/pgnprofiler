@@ -72,6 +72,9 @@
     <ClCompile Include="..\src\3rdparty\THREADSYNC\CriticalSection.cpp">
       <Filter>3rdparty\THREADSYNC</Filter>
     </ClCompile>
+    <ClCompile Include="Executor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -118,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="..\src\3rdparty\THREADSYNC\CriticalSection.h">
       <Filter>3rdparty\THREADSYNC</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
