@@ -163,10 +163,25 @@ int main(int argc, char** argv) {
 
         list<std::thread*> threads;
         for (size_t i = 0; i < executors; i++) {
-            LogComment(0, COMMENT_1, "Launching executor ", 0);
-            threads.push_back(new std::thread([=] {
-                    string result = RunExecutor(concatIth(fileNames, i, executors), directory, repeat);
-                    COUT_INFO("[" << i << " of " << executors << "] " << result);
+            LogComment(0, COMMENT_1, (string("Launching executor ") + std::to_string(i)).c_str(), 0);
+            threads.push_back(new std::thread([=, &nFiles, &nMessages] {
+                    std::stringstream result(RunExecutor(concatIth(fileNames, i, executors), directory, repeat));
+                    size_t loc_nFiles = 0, loc_nMessages = 0;
+                    while (result.good())
+                    {
+                        string line;
+                        getline(result, line, '\n');
+                        if (!line.empty()) {
+                            loc_nFiles++;
+                            auto pos = line.find_last_of('=');
+                            loc_nMessages += std::stoi(line.substr(pos+1, -1));
+                        }
+                    }
+
+                    COUT_INFO("[" << i << " of " << executors << "] Files: " << loc_nFiles << "  Messages: " << loc_nMessages << endl);
+
+                    InterlockedAdd64((LONG64*)&nFiles, loc_nFiles);
+                    InterlockedAdd64((LONG64*)&nMessages, loc_nMessages);
                 }));
         }
 

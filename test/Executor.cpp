@@ -29,6 +29,20 @@ string concatIth(const vector<string>& names, size_t i, size_t span)
 	return result;
 }
 
+void ReadProcessOutput(HANDLE hReadPipe, /*out*/ string& messages)
+{
+	for (int dataSize = 0; PeekNamedPipe(hReadPipe, NULL, 0, NULL, (LPDWORD)&dataSize, NULL) && dataSize; dataSize = 0)
+	{
+		char* buf = (char*)calloc(dataSize + 1, sizeof(char));
+		int bytesRead = 0;
+		ReadFile(hReadPipe, buf, dataSize, (LPDWORD)&bytesRead, NULL);
+		buf[bytesRead] = 0;
+
+		messages.append(buf);
+		free(buf);
+	}
+}
+
 string RunExecutor(const string& fileNames, const string& directory, int repeat)
 {
 	ATLTRACE2(atlTraceDBProvider, 0, "RunExecutor(%s)\n", fileNames.c_str());
@@ -49,8 +63,7 @@ string RunExecutor(const string& fileNames, const string& directory, int repeat)
 		cmdLine.append(std::to_wstring(repeat));
 	}
 
-	int	iReturnVal = -1;
-	char* Buffer = NULL;
+	string messages;
 
 	HANDLE hReadPipe = NULL, hWritePipe = NULL;
 
@@ -68,60 +81,25 @@ string RunExecutor(const string& fileNames, const string& directory, int repeat)
 		si.dwFlags = STARTF_USESTDHANDLES + STARTF_USESHOWWINDOW;
 		si.wShowWindow = SW_HIDE;
 
-		try
+		if (CreateProcess(NULL, (LPWSTR)cmdLine.c_str(), &sa, &sa, true, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi))
 		{
-			if (CreateProcess(NULL, (LPWSTR)cmdLine.c_str(), &sa, &sa, true, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi))
+			while (::WaitForSingleObject(pi.hProcess, 0) != WAIT_OBJECT_0)
 			{
-				try
-				{
-					while (::WaitForSingleObject(pi.hProcess, 0) != WAIT_OBJECT_0)
-					{
-						Sleep(50);
-					}
-
-					int DataSize = 0;
-
-					if (PeekNamedPipe(hReadPipe, NULL, 0, NULL, (LPDWORD)&DataSize, NULL))
-					{
-						if (DataSize)
-						{
-							int BufferSize = 2000;
-							if (DataSize > BufferSize)
-								BufferSize = DataSize;
-							Buffer = (char*)malloc(BufferSize + 1);
-							memset(Buffer, 0, sizeof(char) * (BufferSize + 1));
-
-							int BytesRead = 0;
-							do
-							{
-								ReadFile(hReadPipe, Buffer, BufferSize, (LPDWORD)&BytesRead, NULL);
-								Buffer[BytesRead] = 0;
-							} while ((int)BytesRead > BufferSize && BufferSize > 0);
-						}
-
-						GetExitCodeProcess(pi.hProcess, (LPDWORD)&iReturnVal);
-					}
-				}
-				catch (...)
-				{
-				}
-
-				CloseHandle(pi.hProcess);
-				CloseHandle(pi.hThread);
+				ReadProcessOutput(hReadPipe, messages);
+				Sleep(50);
 			}
-			CloseHandle(hReadPipe);
-			CloseHandle(hWritePipe);
+
+			ReadProcessOutput(hReadPipe, messages);
+
+			CloseHandle(pi.hProcess);
+			CloseHandle(pi.hThread);
 		}
-		catch (...)
-		{
-			CloseHandle(hReadPipe);
-			CloseHandle(hWritePipe);
-		}
+
+		CloseHandle(hReadPipe);
+		CloseHandle(hWritePipe);
 	}
 
-	string tmp(Buffer ? Buffer : "");
+	//ATLTRACE2(atlTraceDBProvider, 0, "<<<- RunExecutor: %s\n", messages.c_str());
 
-	free(Buffer);
-
-	return tmp;
+	return messages;
 }

@@ -126,46 +126,30 @@ LRESULT CPGNProfilerView::OnGetdispinfo(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bH
 	{
 		m_pCurLogger->Lock();	// prevent accessing invalidated m_logStart due to remapping in CTraceReader::HandleProcessLoggerOverlappedResult
 
-		const BYTE* baseAddr = m_pCurLogger->GetMessageData(pItem->iItem);
-		TRC_TYPE trcType = (TRC_TYPE)baseAddr[4];
-
-		switch (trcType)
+		try
 		{
-		case TRC_CLIENTSQL:
-		case TRC_SYSTEMSQL:
-		// deprecated SQLType
-		case TRC_SCHEMA_TABLES:
-		case TRC_SCHEMA_COLUMNS:
-		case TRC_SCHEMA_INDEXES:
-		case TRC_SCHEMA_CATALOGS:
-		case TRC_SCHEMA_FOREIGN_KEYS:
-		case TRC_SCHEMA_PRIMARY_KEYS:
-		case TRC_SCHEMA_PROCEDURE_COLUMNS:
-		case TRC_SCHEMA_PROCEDURE_PARAMETERS:
-		case TRC_SCHEMA_PROCEDURES:
-		case TRC_NOTIFIES:
-		// current SQLType
-		case TRC_SYS_SCHEMA:
-		case TRC_USER_SCHEMA:
-		case TRC_COMMENT:
-			{
-				CProfSQLmsg profmsg((BYTE*)baseAddr, true);
-				const WCHAR* pszText = DisplaySQLmsg(pItem->iSubItem, profmsg, m_pCurLogger->GetLogger2AppnameMap());
-				wcsncpy(pItem->pszText, pszText, pItem->cchTextMax-1);
-				pItem->pszText[pItem->cchTextMax-1] = 0;
-			}
-			break;
+			const BYTE* baseAddr = m_pCurLogger->GetMessageData(pItem->iItem);
+			TRC_TYPE trcType = (TRC_TYPE)baseAddr[4];
 
-		case TRC_ERROR:
+			switch (trcType)
 			{
-				CProfERRORmsg profmsg((BYTE*)baseAddr, true);
-				const WCHAR* pszText = DisplayERRmsg(pItem->iSubItem, profmsg, m_pCurLogger->GetLogger2AppnameMap());
-				wcsncpy(pItem->pszText, pszText, pItem->cchTextMax-1);
-				pItem->pszText[pItem->cchTextMax-1] = 0;
-			}
-			break;
-
-		case TRC_STARTUP:
+			case TRC_CLIENTSQL:
+			case TRC_SYSTEMSQL:
+				// deprecated SQLType
+			case TRC_SCHEMA_TABLES:
+			case TRC_SCHEMA_COLUMNS:
+			case TRC_SCHEMA_INDEXES:
+			case TRC_SCHEMA_CATALOGS:
+			case TRC_SCHEMA_FOREIGN_KEYS:
+			case TRC_SCHEMA_PRIMARY_KEYS:
+			case TRC_SCHEMA_PROCEDURE_COLUMNS:
+			case TRC_SCHEMA_PROCEDURE_PARAMETERS:
+			case TRC_SCHEMA_PROCEDURES:
+			case TRC_NOTIFIES:
+				// current SQLType
+			case TRC_SYS_SCHEMA:
+			case TRC_USER_SCHEMA:
+			case TRC_COMMENT:
 			{
 				CProfSQLmsg profmsg((BYTE*)baseAddr, true);
 				const WCHAR* pszText = DisplaySQLmsg(pItem->iSubItem, profmsg, m_pCurLogger->GetLogger2AppnameMap());
@@ -173,6 +157,29 @@ LRESULT CPGNProfilerView::OnGetdispinfo(int /*idCtrl*/, LPNMHDR pnmh, BOOL& /*bH
 				pItem->pszText[pItem->cchTextMax - 1] = 0;
 			}
 			break;
+
+			case TRC_ERROR:
+			{
+				CProfERRORmsg profmsg((BYTE*)baseAddr, true);
+				const WCHAR* pszText = DisplayERRmsg(pItem->iSubItem, profmsg, m_pCurLogger->GetLogger2AppnameMap());
+				wcsncpy(pItem->pszText, pszText, pItem->cchTextMax - 1);
+				pItem->pszText[pItem->cchTextMax - 1] = 0;
+			}
+			break;
+
+			case TRC_STARTUP:
+			{
+				CProfSQLmsg profmsg((BYTE*)baseAddr, true);
+				const WCHAR* pszText = DisplaySQLmsg(pItem->iSubItem, profmsg, m_pCurLogger->GetLogger2AppnameMap());
+				wcsncpy(pItem->pszText, pszText, pItem->cchTextMax - 1);
+				pItem->pszText[pItem->cchTextMax - 1] = 0;
+			}
+			break;
+			}
+		}
+		catch (...)
+		{
+			ATLTRACE2(atlTraceDBProvider, 0, L"** Access exception for item %d\n", pItem->iItem);
 		}
 
 		m_pCurLogger->Unlock();
@@ -464,6 +471,11 @@ BOOL CPGNProfilerView::ShowMessages(CLoggerItemBase* pLogger)
 
 		// do not use DeleteAllItems(); for performance reasons!
 		SetItemCountEx(0, 0);
+
+		if (m_pCurLogger != nullptr)
+		{
+			m_pCurLogger->ClearLog();
+		}
 
 		return TRUE;
 	}

@@ -2207,7 +2207,7 @@ void CMainFrame::LoadSettings()
 			Json::Value root;
 			Json::Reader reader;
 
-			ATLTRACE2(atlTraceDBProvider, 0, _T("CMainFrame::LoadSettings: read registry key qclrLight = %s\n"), buffer);
+			ATLTRACE2(atlTraceDBProvider, 0, "CMainFrame::LoadSettings: read registry key qclrLight = %s\n", (char*)buffer);
 
 			if (reader.parse((char*)buffer, root))
 			{
@@ -2236,7 +2236,7 @@ void CMainFrame::LoadSettings()
 			Json::Value root;
 			Json::Reader reader;
 
-			ATLTRACE2(atlTraceDBProvider, 0, _T("CMainFrame::LoadSettings: read registry key qclrDark = %s\n"), buffer);
+			ATLTRACE2(atlTraceDBProvider, 0, "CMainFrame::LoadSettings: read registry key qclrDark = %s\n", (char*)buffer);
 
 			if (reader.parse((char*)buffer, root))
 			{

@@ -78,13 +78,13 @@ DWORD WINAPI CTraceReader::ThreadProc(LPVOID pParam)
 
 	while (WaitForSingleObject(pThis->m_hQuit, 0) == WAIT_TIMEOUT)
 	{
-		const auto WAIT_N = 1;
+		const auto WAIT_N = 4;
 
 		ULONG nresults = 0;
 		void* results[WAIT_N] = { 0 };
 		char tmp_buffer[32 * WAIT_N] = { 0 };
 
-		if (WaitUnlimitedWaitEx(pThis->m_pUnlimitedWait, results, tmp_buffer, WAIT_N, &nresults, DEFAULT_WAIT, TRUE))
+		if (WaitUnlimitedWaitEx(pThis->m_pUnlimitedWait, &results[0], &tmp_buffer[0], WAIT_N, &nresults, DEFAULT_WAIT, TRUE))
 		{
 			ATLTRACE2(atlTraceDBProvider, 0, L"%u objects signalled.\n", nresults);
 			continue;

@@ -366,6 +366,8 @@ void CHostLoggerItem::CloseRemotePipe()
 
 void CHostLoggerItem::AddPackedMessage(CPackedMessage pMessage)
 {
+	Lock();
+
 	if (m_rgPackedMessages.size() == 0)
 	{
 		// remember initialization time
@@ -373,6 +375,8 @@ void CHostLoggerItem::AddPackedMessage(CPackedMessage pMessage)
 	}
 
 	m_rgPackedMessages.push_back(pMessage);
+
+	Unlock();
 
 	if (m_filterActive)
 	{
@@ -384,7 +388,9 @@ void CHostLoggerItem::AddPackedMessage(CPackedMessage pMessage)
 		// apply filter
 		if (!m_driver.Evaluate() && m_driver._bisrez != 0.0)
 		{
+			Lock();
 			m_rgFilteredMessages.push_back(pMessage);
+			Unlock();
 		}
 	}
 }
@@ -504,12 +510,17 @@ void CHostLoggerItem::FilterLoggerItems()
 
 void CHostLoggerItem::ClearLog()
 {
+	Lock();
+
 	m_rgPackedMessages.clear();
+	m_rgFilteredMessages.clear();
 
 	for (auto it=m_children.begin(); it != m_children.end(); it++)
 	{
 		(*it)->ClearLog();
 	}
+
+	Unlock();
 }
 
 void CHostLoggerItem::SetTraceLevel(DWORD dwTraceLevel)

@@ -29,10 +29,12 @@ void CPipesMonitor::start()
 
 void CPipesMonitor::stop()
 {
-	if (m_pth != nullptr && m_pth->joinable())
+	cancellation_token.cancel();
+
+	if (m_pth != nullptr)
 	{
-		cancellation_token.cancel();
-		m_pth->join();
+		if (m_pth->joinable())
+			m_pth->join();
 		delete m_pth;
 		m_pth = nullptr;
 	}
@@ -104,7 +106,7 @@ void CPipesMonitor::doMonitor()
 
 	while (cancellation_token)
 	{
-		const DWORD dwWait = WaitForSingleObjectEx(oConnect.hEvent, INFINITE, TRUE);
+		const DWORD dwWait = WaitForSingleObjectEx(oConnect.hEvent, 1000, TRUE);
 
 		switch (dwWait)
 		{
@@ -145,7 +147,7 @@ void CPipesMonitor::doMonitor()
 
 		default:
 			// An error occurred in the wait function. 
-			ATLTRACE2(atlTraceDBProvider, 0, _T("** WaitForSingleObjectEx (%d)\n"), GetLastError());
+			ATLTRACE2(atlTraceDBProvider, 3, _T("** WaitForSingleObjectEx (%d)\n"), GetLastError());
 		}
 	}
 }
@@ -171,7 +173,7 @@ VOID WINAPI CPipesMonitor::CompletedWriteRoutine(DWORD dwErr, DWORD cbWritten, L
 	// Disconnect if an error occurred.
 	if (!fRead)
 	{
-		ATLTRACE2(atlTraceDBProvider, 0, _T("** Error in ReadFileEx %d\n"), GetLastError());
+		//ATLTRACE2(atlTraceDBProvider, 0, _T("** Error in ReadFileEx %d\n"), GetLastError());
 		lpPipeInst->p->DisconnectAndClose(lpPipeInst);
 	}
 
@@ -306,19 +308,15 @@ BOOL CPipesMonitor::ConnectToNewClient(HANDLE hPipe, LPOVERLAPPED lpo)
 
 	switch (GetLastError())
 	{
-		// The overlapped connection in progress. 
-	case ERROR_IO_PENDING:
+	case ERROR_IO_PENDING:		// The overlapped connection in progress
 		fPendingIO = TRUE;
 		break;
 
-		// Client is already connected, so signal an event. 
-
-	case ERROR_PIPE_CONNECTED:
+	case ERROR_PIPE_CONNECTED:		// Client is already connected, so signal an event
 		if (SetEvent(lpo->hEvent))
 			break;
 
-		// If an error occurs during the connect operation... 
-	default:
+	default:		// If an error occurs during the connect operation... 
 		{
 			ATLTRACE2(atlTraceDBProvider, 0, _T("** ConnectNamedPipe failed with %d.\n"), GetLastError());
 			return 0;
