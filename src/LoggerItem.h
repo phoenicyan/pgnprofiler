@@ -17,8 +17,13 @@
 
 using namespace bisparser;
 
+#if _DEBUG
+#define PIPEBUFFERSIZE	(2*1024*1024)
+#define MMFGROWSIZE		(1*1024*1024)
+#else
 #define PIPEBUFFERSIZE	(32*1024*1024)
 #define MMFGROWSIZE		(16*1024*1024)
+#endif
 
 enum LOGGER_TYPE
 {

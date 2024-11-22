@@ -78,7 +78,7 @@ DWORD WINAPI CTraceReader::ThreadProc(LPVOID pParam)
 
 	while (WaitForSingleObject(pThis->m_hQuit, 0) == WAIT_TIMEOUT)
 	{
-		const auto WAIT_N = 4;
+		const auto WAIT_N = 1;
 
 		ULONG nresults = 0;
 		void* results[WAIT_N] = { 0 };
@@ -132,8 +132,9 @@ BOOL WINAPI CTraceReader::HandleProcessLoggerOverlappedResult(/*CProcessLoggerIt
 		// check free space
 		if (numBytesLeft >= dwSpaceLeft)
 		{
-			ATLTRACE2(atlTraceDBProvider, 0, L"HandleProcessLoggerOverlappedResult: increasing file mapping size\n");
-			if (processLogger.GrowLogFile(MMFGROWSIZE))
+			DWORD growSize = ((numBytesLeft - dwSpaceLeft) / MMFGROWSIZE + 1) * MMFGROWSIZE;
+			ATLTRACE2(atlTraceDBProvider, 0, L"Increasing file mapping size %d by %d\n", processLogger.m_dwMMFsize, growSize);
+			if (processLogger.GrowLogFile(growSize))
 			{
 				break;
 			}

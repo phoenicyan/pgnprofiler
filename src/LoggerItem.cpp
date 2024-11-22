@@ -628,11 +628,12 @@ int CProcessLoggerItem::OpenLogFile(DWORD dwDeleteOnClose)
 	return 0;
 }
 
+// Important: m_logStart, m_logWritePos and m_pendingWritePos altered by this function.
 int CProcessLoggerItem::GrowLogFile(DWORD size)
 {
 	CriticalSectionLock lock(_lock);
 
-	DWORD dwWriteOffset;
+	DWORD dwWriteOffset, dwPendingOffset;
 
 	m_dwMMFsize += size;
 
@@ -653,6 +654,7 @@ int CProcessLoggerItem::GrowLogFile(DWORD size)
 		WriteHeader();
 
 		dwWriteOffset = m_logWritePos - m_logStart;
+		dwPendingOffset = m_pendingWritePos - m_logStart;
 	}
 	else
 	{
@@ -663,6 +665,7 @@ int CProcessLoggerItem::GrowLogFile(DWORD size)
 			CloseHandle(m_hMapping);
 
 		dwWriteOffset = m_logWritePos - m_logStart;
+		dwPendingOffset = m_pendingWritePos - m_logStart;
 
 		m_logWritePos = m_logStart = 0;
 	}
@@ -684,6 +687,7 @@ int CProcessLoggerItem::GrowLogFile(DWORD size)
 	}
 
 	m_logWritePos = m_logStart + dwWriteOffset;
+	m_pendingWritePos = m_logStart + dwPendingOffset;
 
 	return 0;
 }
