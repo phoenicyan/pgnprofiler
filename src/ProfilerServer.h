@@ -14,4 +14,4 @@ class UnlimitedWait;
 
 extern DWORD ProfilerTimerInit();
 extern DWORD GetAppList(DWORD* appList, /*inout*/int* entries);
-extern void CaptureToggle(CLoggerItemBase* pBlock, UnlimitedWait* pUnlimitedWait);
+extern "C" void CaptureToggle(CLoggerItemBase* pBlock, UnlimitedWait* pUnlimitedWait);

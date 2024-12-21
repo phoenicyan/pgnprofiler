@@ -5,7 +5,7 @@ Open source version of Intellisoft's PGNProfiler
 
 ## Purpose
 
-Need an efficient tool to collect trace/profiling info from Intellisoft OLE DB Provider for PostgreSQL. The tool should be able to read very long traces from Windows applications and Services (32- and 64-bit), change logging levels, filter for errors, store traces to files, and display previously stored files. It has advanced features like injecting itself into another computer where PGNP was not installed and collecting a remote trace. It supports light and dark themes. Etc.
+Need an efficient tool to collect trace/profiling info from Intellisoft OLE DB Provider for PostgreSQL. The tool should be able to read very long traces from Windows applications and Services (32- and 64-bit), change logging levels, filter for errors, store traces to files, and display previously stored files. It has advanced features like injecting itself into another computer (where PGNProfiler is not installed or there is no local access) and collecting a remote trace. It supports light and dark themes. Etc.
 
 ### Prerequisites
 

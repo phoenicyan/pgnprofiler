@@ -44,10 +44,10 @@ public:
 
 	void stop();
 
-private:
-	PipeCallback m_cbCreated, m_cbClosed;
 	rethread::standalone_cancellation_token cancellation_token;
 	rethread::thread* m_pth;
+private:
+	PipeCallback m_cbCreated, m_cbClosed;
 	void doMonitor();
 
 	static VOID DisconnectAndClose(LPPIPEINST lpPipeInst);

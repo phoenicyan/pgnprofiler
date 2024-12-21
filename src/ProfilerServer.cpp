@@ -7,12 +7,8 @@
 
 #include "stdafx.h"
 #include "resource.h"
-#include "FilterView.h"
-#include "ExplorerView.h"
-#include "PGNProfilerView.h"
-#include "DetailsView.h"
-#include "aboutdlg.h"
-#include "MainFrm.h"
+#include "LoggerItem.h"
+#include "TraceReader.h"
 #include "ProfilerDef.h"
 #include "ProfilerServer.h"
 
@@ -39,7 +35,7 @@ DWORD ProfilerTimerInit()
 }
 
 /// Start or Stop capture
-void CaptureToggle(CLoggerItemBase* pBlock, UnlimitedWait* pUnlimitedWait)
+extern "C" void CaptureToggle(CLoggerItemBase* pBlock, UnlimitedWait* pUnlimitedWait)
 {
 	if (pBlock->GetType() != LT_PROCESS && pBlock->GetType() != LT_PROCESS64)
 		return;

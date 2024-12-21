@@ -542,7 +542,7 @@ void CHostLoggerItem::SetTraceLevel(DWORD dwTraceLevel)
 CProcessLoggerItem::CProcessLoggerItem(LPCTSTR pstrName, CLoggerItemBase* pParent, LOGGER_STATE state, LONGLONG llMaxLogFileSize, BOOL is64)
 	: CLoggerItemBase(pstrName, pParent, is64 ? LT_PROCESS64 : LT_PROCESS, state), m_dwMMFsize(0)
 	, m_hLogFile(INVALID_HANDLE_VALUE), m_hMapping(0), m_logStart(0), m_logWritePos(0)
-	, m_pendingBytes(0), m_pendingWritePos(0), m_pendingLengthUnknown(false), m_llMaxLogFileSize(llMaxLogFileSize)
+	, m_pendingBytes(0), m_pendingWritePos(0), m_pendingLengthUnknown(false), m_llMaxLogFileSize(0)
 	, m_pid(0), m_hFile(INVALID_HANDLE_VALUE), m_errorCnt(0), m_dwDeleteOnClose(1)
 {
 	memset(&m_op, 0, sizeof(m_op));
@@ -600,6 +600,8 @@ int CProcessLoggerItem::InternalOpenLogFile()
 		return 1;
 	}
 
+	m_llMaxLogFileSize = MAX_LOGFILE_SIZE;
+
 	return 0;
 }
 
@@ -635,12 +637,15 @@ int CProcessLoggerItem::GrowLogFile(DWORD size)
 
 	DWORD dwWriteOffset, dwPendingOffset;
 
+	if (size < MMFGROWSIZE)
+		size = MMFGROWSIZE;
+
 	m_dwMMFsize += size;
 
-	if (m_llMaxLogFileSize != 0 &&								// there is limit for max size
-		(m_logWritePos - m_logStart) > PGL_HEADER_SIZE &&		// smth was written already
+	if (m_llMaxLogFileSize == 0 ||								// max limit not set (i.e. file wasn't open)
+		((m_logWritePos - m_logStart) > PGL_HEADER_SIZE &&		// smth was written already
 		0 == m_pendingBytes &&									// no pending message
-		m_dwMMFsize > m_llMaxLogFileSize)						// new size will exceed limit
+		m_dwMMFsize > m_llMaxLogFileSize))						// new size will exceed limit
 	{
 		CloseLogFile();
 
@@ -648,8 +653,6 @@ int CProcessLoggerItem::GrowLogFile(DWORD size)
 		{
 			return 1;
 		}
-
-		m_dwMMFsize = MMFGROWSIZE;
 
 		WriteHeader();
 

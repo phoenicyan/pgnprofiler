@@ -677,29 +677,29 @@ DWORD ProfilerClientInit()
 		LPTSTR lpszWrite = (LPTSTR)sc.asBase64();
 		TCHAR chReadBuf[BUFSIZE];
 		BOOL fSuccess;
-		DWORD cbRead;
+		DWORD cbRead, err;
 		LPTSTR lpszPipename = (LPTSTR)TEXT("\\\\.\\pipe\\pgnprof_comm");
 		
-		fSuccess = CallNamedPipe(
-			lpszPipename,				// pipe name 
-			lpszWrite,					// message to server 
-			(lstrlen(lpszWrite) + 1) * sizeof(TCHAR), // message length 
-			chReadBuf,					// buffer to receive reply 
-			BUFSIZE * sizeof(TCHAR),	// size of read buffer 
-			&cbRead,					// number of bytes read 
-			2000);						// waits for 2 seconds
-		if (fSuccess || GetLastError() == ERROR_MORE_DATA)
-		{
-			//_tprintf(TEXT("%s\n"), chReadBuf);
-
-			// The pipe is closed; no more data can be read
-			//if (!fSuccess)
-			//{
-			//	printf("\nExtra data in message was lost\n");
-			//}
-
-			LogStartup(NULL, "Process with PID=%d started", GetCurrentProcessId());
-		}
+		do {
+			fSuccess = CallNamedPipe(
+				lpszPipename,				// pipe name 
+				lpszWrite,					// message to server 
+				(lstrlen(lpszWrite) + 1) * sizeof(TCHAR), // message length 
+				chReadBuf,					// buffer to receive reply 
+				BUFSIZE * sizeof(TCHAR),	// size of read buffer 
+				&cbRead,					// number of bytes read 
+				2000);						// waits for 2 seconds
+			err = GetLastError();
+			if (fSuccess || err == ERROR_MORE_DATA)
+			{
+				//_tprintf(TEXT("%s\n"), chReadBuf);
+				LogStartup(NULL, "Process with PID=%d started", GetCurrentProcessId());
+			}
+			else
+			{
+				ATLTRACE(atlTraceDBProvider, 0, _T("** ProfilerClientInit: CallNamedPipe failed with error %d\n"), err);
+			}
+		} while (!fSuccess && err == ERROR_PIPE_BUSY);
 	}
 	else
 	{

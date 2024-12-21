@@ -254,7 +254,7 @@ BOOL WINAPI CTraceReader::HandleProcessLoggerOverlappedResult(/*CProcessLoggerIt
 	rez = ReadFile(processLogger.GetPipe(), processLogger.m_tszBuffer, PIPEBUFFERSIZE, NULL, &processLogger.m_op);
 	if (rez != 0 || GetLastError() == ERROR_IO_PENDING)
 	{
-		::PostMessage(processLogger.GetMainWindow(), MYMSG_DATA_READ, (WPARAM)processLogger.GetPipe(), (LPARAM)0);
+		//::PostMessage(processLogger.GetMainWindow(), MYMSG_DATA_READ, (WPARAM)processLogger.GetPipe(), (LPARAM)0);
 	}
 	else
 	{

@@ -6,6 +6,7 @@
  *************************************************************************/
 
 #include "stdafx.h"
+#include "DebugHelper.h"
 
 string concatIth(const vector<string>& names, size_t i, size_t span)
 {
@@ -83,6 +84,8 @@ string RunExecutor(const string& fileNames, const string& directory, int repeat)
 
 		if (CreateProcess(NULL, (LPWSTR)cmdLine.c_str(), &sa, &sa, true, NORMAL_PRIORITY_CLASS, NULL, NULL, &si, &pi))
 		{
+			LogComment(0, COMMENT_1, (string("Started executor ") + std::to_string(GetProcessId(pi.hProcess))).c_str(), 0);
+
 			while (::WaitForSingleObject(pi.hProcess, 0) != WAIT_OBJECT_0)
 			{
 				ReadProcessOutput(hReadPipe, messages);

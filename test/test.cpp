@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
     size_t nFiles = 0, nMessages = 0;
     vector<string> fileNames;
 
-    for_each(paths.begin(), paths.end(), [&](string& path) {
+    for (const auto& path : paths) {
         COUT_DEBUG("Scanning " << path << "...\n");
         WIN32_FIND_DATAA findData;
         HANDLE hFind = ::FindFirstFileA(path.c_str(), &findData);
@@ -148,13 +148,13 @@ int main(int argc, char** argv) {
 
             FindClose(hFind);
         }
-    });
+    }
 
     if (0 == executors || fileNames.size() < MIN_EXECUTORS) {
         do {
-            for_each(fileNames.begin(), fileNames.end(), [&](const string& fileName) {
+            for(const auto& fileName : fileNames) {
                 LogFile(fileName.c_str(), nFiles, nMessages);
-            });
+            }
         } while (repeat--);
     }
     else {
@@ -163,7 +163,7 @@ int main(int argc, char** argv) {
 
         list<std::thread*> threads;
         for (size_t i = 0; i < executors; i++) {
-            LogComment(0, COMMENT_1, (string("Launching executor ") + std::to_string(i)).c_str(), 0);
+            //LogComment(0, COMMENT_1, (string("Launching executor ") + std::to_string(i)).c_str(), 0);
             threads.push_back(new std::thread([=, &nFiles, &nMessages] {
                     std::stringstream result(RunExecutor(concatIth(fileNames, i, executors), directory, repeat));
                     size_t loc_nFiles = 0, loc_nMessages = 0;

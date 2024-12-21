@@ -917,6 +917,8 @@ BOOL Is64bitProcess(HANDLE hProcess)
 	return !f64;
 }
 
+static std::array<std::wstring, 3> ignoreList = { L"PGNProfiler.exe", L"PGNPUpdate.exe", L"PGNPConsole.exe" };
+
 void CMainFrame::CheckAndAddProcessLoggerNode(LPCTSTR pProcessName, DWORD pid, bool bIs64bitProcess, map<CLoggerItemBase*, LOGGER_STATE>& statesMap, CLoggerItemBase& rootLogger)
 {
 	ATLTRACE2(atlTraceDBProvider, 0, L"CMainFrame::CheckAndAddProcessLoggerNode('%s', root='%s')\n", pProcessName, rootLogger.GetName());
@@ -949,33 +951,30 @@ void CMainFrame::CheckAndAddProcessLoggerNode(LPCTSTR pProcessName, DWORD pid, b
 	}
 
 	// if process not found create new (just started)
-	if (pProcess == 0 && wcsnicmp(L"PGNProfiler.exe", pProcessName, 15) != 0 &&	// do not add PGNProfiler.exe
-		wcsnicmp(L"PGNPUpdate.exe", pProcessName, 14) != 0)					// do not add PGNPUpdate.exe
+	if (pProcess == 0 && std::find_if(std::begin(ignoreList), std::end(ignoreList), [pProcessName](auto& s) { return wcsicmp(s.c_str(), pProcessName) == 0; }) == std::end(ignoreList))
 	{
 		ATLTRACE2(atlTraceDBProvider, 0, L"CMainFrame::CheckAndAddProcessLoggerNode(): open log file\n");
 
 		pProcess = new CProcessLoggerItem(pProcessName, &rootLogger, LS_PAUSED, m_optionsForWork.m_llMaxLogFileSize, bIs64bitProcess);
 		pProcess->SetPID(pid);
 		pProcess->SetMainWindow(m_hWnd);
-		if (pProcess->OpenLogFile(m_optionsForWork.m_dwDeleteWorkFiles) == 0)
+
+		rootLogger.AddChild(pProcess);
+
+		LOGGER_STATE rootState = rootLogger.GetState();
+		if (rootState == LS_RUN)
 		{
-			rootLogger.AddChild(pProcess);
+			CaptureToggle(pProcess, m_traceReader.GetUnlimitedWait());
+		}
 
-			LOGGER_STATE rootState = rootLogger.GetState();
-			if (rootState == LS_RUN)
-			{
-				CaptureToggle(pProcess, m_traceReader.GetUnlimitedWait());
-			}
+		if (rootLogger.GetTraceLevel() != 0)
+		{
+			pProcess->SetTraceLevel(rootLogger.GetTraceLevel());
+		}
 
-			if (rootLogger.GetTraceLevel() != 0)
-			{
-				pProcess->SetTraceLevel(rootLogger.GetTraceLevel());
-			}
-
-			if (m_optionsForEdit.m_dwParamFormat != PRMFMT_DEFAULT)
-			{
-				pProcess->SetParamFormat(m_optionsForEdit.m_dwParamFormat);
-			}
+		if (m_optionsForEdit.m_dwParamFormat != PRMFMT_DEFAULT)
+		{
+			pProcess->SetParamFormat(m_optionsForEdit.m_dwParamFormat);
 		}
 	}
 }
