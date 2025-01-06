@@ -666,8 +666,6 @@ DWORD ProfilerClientInit()
 	DH_PIPE* pipe = m_dhPipes.AddPipeInstance();
 	pipe->StartComm();
 
-	Sleep(0);
-
 	// notify PGNProfiler (if any) that new instance of provider is started
 	COneInstance guard(_T("Global\\")_T(PROFILERSGN));
 	DWORD waitrez = ::WaitForSingleObject(guard.m_hInstanceGuard, 0);

@@ -118,6 +118,9 @@ BOOL WINAPI CTraceReader::HandleProcessLoggerOverlappedResult(/*CProcessLoggerIt
 		processLogger.SetPipe(INVALID_HANDLE_VALUE);
 
 		CloseHandle(hPipe);
+
+		::PostMessage(processLogger.GetMainWindow(), WM_PGNPROF_STATUS, 0, 0);
+
 		return FALSE;
 	}
 

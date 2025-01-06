@@ -262,20 +262,25 @@ BOOL CPipesMonitor::CreateAndConnectInstance(LPOVERLAPPED lpoOverlap)
 {
 	ATLTRACE2(atlTraceDBProvider, 0, _T("Enter CreateAndConnectInstance()\n"));
 
-	LPCTSTR lpszPipename = _T("\\\\.\\pipe\\") PGNPIPE_PREFIX _T("comm");
+	// set DACL to NULL to allow anyone to access the pipe (similar to GPFileDistributor)
+	LPVOID lpSD = ::LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
+	::InitializeSecurityDescriptor(lpSD, SECURITY_DESCRIPTOR_REVISION);
+	::SetSecurityDescriptorDacl(lpSD, TRUE, 0, FALSE);
+
+	SECURITY_ATTRIBUTES sa{ sizeof(sa), lpSD, FALSE };
 
 	m_hPipe = CreateNamedPipe(
-		lpszPipename,             // pipe name 
+		_T("\\\\.\\pipe\\") PGNPIPE_PREFIX _T("comm"),             // pipe name 
 		PIPE_ACCESS_DUPLEX |      // read/write access 
 		FILE_FLAG_OVERLAPPED,     // overlapped mode 
 		PIPE_TYPE_MESSAGE |       // message-type pipe 
 		PIPE_READMODE_MESSAGE |   // message read mode 
 		PIPE_WAIT,                // blocking mode 
 		PIPE_UNLIMITED_INSTANCES, // unlimited instances 
-		BUFSIZE * sizeof(TCHAR),    // output buffer size 
-		BUFSIZE * sizeof(TCHAR),    // input buffer size 
+		BUFSIZE * sizeof(TCHAR),  // output buffer size 
+		BUFSIZE * sizeof(TCHAR),  // input buffer size 
 		PIPE_TIMEOUT,             // client time-out 
-		NULL);                    // default security attributes
+		&sa);                     // default security attributes
 	if (m_hPipe == INVALID_HANDLE_VALUE)
 	{
 		ATLTRACE2(atlTraceDBProvider, 0, _T("** CreateNamedPipe failed with %d.\n"), GetLastError());
@@ -284,6 +289,8 @@ BOOL CPipesMonitor::CreateAndConnectInstance(LPOVERLAPPED lpoOverlap)
 
 	// Call a subroutine to connect to the new client. 
 	auto rez = ConnectToNewClient(m_hPipe, lpoOverlap);
+
+	LocalFree(lpSD);
 
 	ATLTRACE2(atlTraceDBProvider, 0, _T("Leave CreateAndConnectInstance()\n"));
 
